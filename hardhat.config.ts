@@ -2,8 +2,9 @@ import "hardhat-deploy";
 import "@nomiclabs/hardhat-ethers";
 import "@typechain/ethers-v5";
 import { HardhatUserConfig } from "hardhat/config";
+import '@typechain/hardhat';
 
-const config: HardhatUserConfig = {
+export default {
   defaultNetwork: "hardhat",
   solidity: "0.8.8",
   networks: {
@@ -23,6 +24,4 @@ const config: HardhatUserConfig = {
       default: 0
     }
   }
-}
-
-export default config;
+} as HardhatUserConfig

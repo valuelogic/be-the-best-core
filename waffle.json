@@ -1,0 +1,5 @@
+{
+  "typechainEnabled": true,
+  "typechainOutputDir": "typechain-types",
+  "compilerVersion": "0.7.1"
+}
