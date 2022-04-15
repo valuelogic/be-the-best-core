@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "./model/Model.sol";
+import "./../model/Model.sol";
 
 contract Users {
 
