@@ -1,15 +1,15 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "./../../model/User.sol";
+import "./model/Model.sol";
 
 contract Users {
 
-    User[] users;
+    SharedModel.User[] users;
 
     function addUser(bool isAdmin, address walletAddress, string memory nick) public {
       users.push(
-          User(
+          SharedModel.User(
               isAdmin,
               walletAddress,
               0,
@@ -17,7 +17,7 @@ contract Users {
         );
    }
 
-   function getUsers() public view returns(User[] memory) {
+   function getUsers() public view returns(SharedModel.User[] memory) {
        return users;
    }
 }
