@@ -30,7 +30,7 @@ describe("Users contract", function () {
 
     const nick = "EXPECTED_NICK";
 
-    await usersContract.addUser(false, walletAddress, nick);
+    await usersContract.addUser(walletAddress, nick, false);
 
     const usersList = await usersContract.getUsers();
 

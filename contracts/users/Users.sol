@@ -7,13 +7,13 @@ contract Users {
 
     SharedModel.User[] users;
 
-    function addUser(bool isAdmin, address walletAddress, string memory nick) public {
+    function addUser(address walletAddress, string memory nick, bool isAdmin) public {
       users.push(
           SharedModel.User(
-              isAdmin,
               walletAddress,
+              nick,
               0,
-              nick)
+              isAdmin)
         );
    }
 
