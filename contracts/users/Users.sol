@@ -5,19 +5,25 @@ import "./../model/Model.sol";
 
 contract Users {
 
-    SharedModel.User[] users;
+    mapping(address => SharedModel.User) users;
+    address[] public addresses;
 
     function addUser(address walletAddress, string memory nick, bool isAdmin) public {
-      users.push(
-          SharedModel.User(
-              walletAddress,
-              nick,
-              0,
-              isAdmin)
-        );
+      // TODO: check if walletAddress, nick are unique in users list
+      addresses.push(walletAddress);
+      users[walletAddress] = SharedModel.User(nick, 0, isAdmin);
    }
 
-   function getUsers() public view returns(SharedModel.User[] memory) {
-       return users;
+   function getUser(address walletAddress) public view returns(SharedModel.User memory) {
+       return users[walletAddress];
    }
+
+   function getUsers() public view returns (SharedModel.User[] memory){
+      SharedModel.User[] memory result = new SharedModel.User[](addresses.length);
+      for (uint i = 0; i < addresses.length; i++) {
+          SharedModel.User storage user = users[addresses[i]];
+          result[i] = user;
+      }
+      return result;
+  }
 }

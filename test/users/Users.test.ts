@@ -21,7 +21,7 @@ describe("Users contract", function () {
     expect(result).to.eql([]);
   });
 
-  it("should add user to users list", async function () {
+  it("should add users to users list", async function () {
     const Users = await ethers.getContractFactory("Users");
 
     const usersContract = await Users.deploy();
@@ -38,9 +38,12 @@ describe("Users contract", function () {
 
     const user = usersList[0];
 
-    expect(user.wallet).to.equal(walletAddress)
     expect(user.isAdmin).to.be.false
     expect(user.nick).to.equal(nick)
     expect(user.points).to.eql(BigNumber.from(0))
+
+    await usersContract.addUser(await ethers.Wallet.createRandom().getAddress(), "random nick", true);
+    const usersListExtended = await usersContract.getUsers();
+    expect(usersListExtended).to.have.lengthOf(2);
   });
 });
