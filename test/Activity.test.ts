@@ -1,9 +1,9 @@
 import { expect, use } from "chai";
 import { ethers } from "hardhat";
-import {BigNumber} from "ethers";
-import {deployContract, MockProvider, solidity} from "ethereum-waffle";
+import { BigNumber } from "ethers";
+import { deployContract, MockProvider, solidity } from "ethereum-waffle";
 import Activity from "../build/Activity.json";
-import {ActivityFactory} from "../build/typechain-types";
+import { ActivityFactory } from "../build/typechain-types";
 
 use(solidity);
 
@@ -45,7 +45,7 @@ describe('Activity contract', () => {
         expect(reward).to.deep.equal(BigNumber.from(1));
     });
 
-    xit('Should emit event after deploying contract', async () => {
+    xit('Should emit event after deploying contract', () => {
         // TODO: Check how to verify emitted event after deployment
     });
 
@@ -67,5 +67,25 @@ describe('Activity contract', () => {
 
         expect(activity.setReward(20)).to.emit(activity, 'RewardChanged')
             .withArgs('Name', BigNumber.from(1), BigNumber.from(20));
+    });
+
+    it('Should change name', async () => {
+        const [wallet] = await ethers.getSigners();
+        const factory = new ActivityFactory(wallet);
+        const activity = await factory.deploy('Name', BigNumber.from(1));
+
+        await activity.setName('NewName');
+        const name = await activity.name();
+
+        expect(name).to.equal('NewName');
+    });
+
+    it('Should emit event after changing name', async () => {
+        const [wallet] = await ethers.getSigners();
+        const factory = new ActivityFactory(wallet);
+        const activity = await factory.deploy('Name', BigNumber.from(1));
+
+        expect(activity.setName('NewName')).to.emit(activity, 'NameChanged')
+            .withArgs('Name', 'NewName');
     });
 });
