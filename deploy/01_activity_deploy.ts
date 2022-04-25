@@ -1,19 +1,18 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
-import { ethers } from "hardhat";
 
 const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { getNamedAccounts, deployments, network } = hre;
     const { deploy, log } = deployments;
     const { deployer } = await getNamedAccounts();
 
-    const greeter = await deploy('Greeter', {
+    const greeter = await deploy('Activity', {
         from: deployer,
-        args: ["Hello"],
+        args: ["Name", 1],
         log: true
     });
 
-    log(`Greeter deployed at address ${greeter.address}`);
+    log(`Activity deployed at address ${greeter.address}`);
 
     
 }

@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 contract Activity {
-    event ActivityCreated(string indexed _name, uint _reward);
     event RewardChanged(string indexed _name, uint _oldReward, uint _newReward);
     event NameChanged(string indexed _oldName, string indexed _newName);
 
@@ -15,13 +14,12 @@ contract Activity {
 
         name = _name;
         reward = _reward;
-        emit ActivityCreated(name, reward);
     }
 
     function setName(string memory _newName) public {
         require(bytes(_newName).length > 0, "Name must be non-empty");
+        emit NameChanged(name, _newName);
         name = _newName;
-        emit ActivityCreated(name, reward);
     }
 
     function setReward(uint _reward) public {
