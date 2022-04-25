@@ -4,7 +4,7 @@ import "@typechain/ethers-v5";
 import { HardhatUserConfig } from "hardhat/config";
 import '@typechain/hardhat';
 
-export default {
+const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   solidity: "0.8.8",
   networks: {
@@ -24,4 +24,6 @@ export default {
       default: 0
     }
   }
-} as HardhatUserConfig
+}
+
+export default config;
