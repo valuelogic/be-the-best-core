@@ -8,10 +8,14 @@ contract Users {
     mapping(address => SharedModel.User) s_users;
     address[] public s_addresses;
 
+    event AddedNewUser(address walletAddress, string nick, bool isAdmin);
+    event UpdatedUsersPoints(address walletAddress, uint16 current_points);
+
     function addUser(address walletAddress, string memory nick, bool isAdmin) public {
-      // TODO: check if walletAddress, nick are unique in s_users list
+      require(s_users[walletAddress].walletAddress != walletAddress, "Wallet address already exists");
       s_addresses.push(walletAddress);
       s_users[walletAddress] = SharedModel.User(walletAddress, nick, 0, isAdmin);
+      emit AddedNewUser(s_users[walletAddress].walletAddress, s_users[walletAddress].nick, s_users[walletAddress].isAdmin);
    }
 
    function getUser(address walletAddress) public view returns(SharedModel.User memory) {
@@ -26,4 +30,13 @@ contract Users {
       }
       return result;
   }
+
+   function addPoints(address walletAddress, uint16 points) public {
+       require(s_users[walletAddress].walletAddress == walletAddress, "User with passed wallet not exists");
+       require(points > 0, "points must be positive number");
+       // TODO: check if msg sender is admin
+       // require(s_users[msg.sender].isAdmin, "msg sender must be admin");
+       s_users[walletAddress].points = s_users[walletAddress].points + points;
+       emit UpdatedUsersPoints(walletAddress, s_users[walletAddress].points);
+   }
 }

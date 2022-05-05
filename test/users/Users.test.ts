@@ -47,5 +47,48 @@ describe("Users contract", function () {
       const usersListExtended = await usersContract.getUsers();
       expect(usersListExtended).to.have.lengthOf(2);
     });
+
+    it("should be reverted when added user wallet address have been already used", async function () {
+      const Users = await ethers.getContractFactory("Users");
+      const usersContract = await Users.deploy();
+
+      const walletAddress = await ethers.Wallet.createRandom().getAddress();
+      
+      await usersContract.addUser(walletAddress, "nick1", false);
+      // TODO: expect to be reverted/rejected
+      // await usersContract.addUser(walletAddress, "nick2", false);
+    });
+  })
+
+  describe("add points", () => {
+    it("should add points to user", async () => {
+      const Users = await ethers.getContractFactory("Users");
+      const usersContract = await Users.deploy();
+
+      const walletAddress = await ethers.Wallet.createRandom().getAddress();
+      
+      await usersContract.addUser(walletAddress, "nick", false);
+      const user = await usersContract.getUser(walletAddress);
+      expect(user.points).to.equal(0)
+
+      await usersContract.addPoints(walletAddress, 2);
+      const userWith2Points = await usersContract.getUser(walletAddress);
+      expect(userWith2Points.points).to.equal(2)
+
+      await usersContract.addPoints(walletAddress, 3);
+      const userWith5Points = await usersContract.getUser(walletAddress);
+      expect(userWith5Points.points).to.equal(5);
+    });
+
+    it("should be reverted when points are not positive number", async function () {
+      const Users = await ethers.getContractFactory("Users");
+      const usersContract = await Users.deploy();
+
+      const walletAddress = await ethers.Wallet.createRandom().getAddress();
+      
+      await usersContract.addUser(walletAddress, "nick1", false);
+      // TODO: expect to be reverted/rejected
+      //await usersContract.addUser(walletAddress, "nick2", false);
+    });
   })
 });
