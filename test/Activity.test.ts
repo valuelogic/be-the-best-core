@@ -41,7 +41,7 @@ describe('Activity contract', async () => {
         let activity: Activity;
 
         beforeEach(async () => {
-            const [wallet] = await ethers.getSigners();
+            const [wallet] = new MockProvider().getWallets();
             const factory = await ethers.getContractFactory<Activity__factory>('Activity', wallet);
             activity = await factory.deploy('Name', BigNumber.from(1));
         })
@@ -71,7 +71,7 @@ describe('Activity contract', async () => {
         let activity: Activity;
 
         beforeEach(async () => {
-            const [wallet] = await ethers.getSigners();
+            const [wallet] = new MockProvider().getWallets();
             const factory = await ethers.getContractFactory<Activity__factory>('Activity', wallet);
             activity = await factory.deploy('Name', BigNumber.from(1));
         })
