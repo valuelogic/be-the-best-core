@@ -1,12 +1,12 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.8;
 
 contract Activity {
     string public name;
     uint8 public reward;
 
-    event RewardChanged(string indexed _name, uint8 _oldReward, uint8 _newReward);
-    event NameChanged(string indexed _oldName, string indexed _newName);
+    event RewardChanged(uint8 _oldReward, uint8 _newReward);
+    event NameChanged(string _oldName, string _newName);
 
     constructor(string memory _name, uint8 _reward) {
         require(bytes(_name).length > 0, "Name must be non-empty");
@@ -16,18 +16,18 @@ contract Activity {
         reward = _reward;
     }
 
-    function setName(string memory _newName) public {
+    function setName(string memory _newName) external {
         require(bytes(_newName).length > 0, "Name must be non-empty");
         emit NameChanged(name, _newName);
         name = _newName;
     }
 
-    function setReward(uint8 _reward) public {
+    function setReward(uint8 _reward) external {
         require(_reward > 0, "Reward must be greater than 0");
         require(_reward != reward, "Reward must be different");
 
         // todo: reward can be modified only by the admin
-        emit RewardChanged(name, reward, _reward);
+        emit RewardChanged(reward, _reward);
         reward = _reward;
     }
 }
