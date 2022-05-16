@@ -1,0 +1,14 @@
+{
+  "require": "ts-node/register/transpile-only",
+  "extensions": ["ts"],
+  "spec": [
+	"test/**/*.test.ts"
+  ],
+  "watch-files": [
+	"contracts",
+	"test"
+  ],
+  "timeout": 5000,
+  "recursive": true,
+  "parallel": true
+}
