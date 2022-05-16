@@ -1,19 +1,15 @@
 import {expect, use} from "chai";
 import {ethers} from "hardhat";
-import {BigNumber, Wallet} from "ethers";
+import {BigNumber} from "ethers";
 import {deployContract, MockProvider, solidity} from "ethereum-waffle";
 import ContractJson from "../artifacts/contracts/Activity.sol/Activity.json";
 import { Activity__factory, Activity } from "../typechain-types";
 
 use(solidity);
 
-describe('Activity contract', async () => {
+describe('Activity contract', () => {
     describe('deploy', async () => {
-        let wallet: Wallet;
-
-        beforeEach(() => {
-            [wallet] = new MockProvider().getWallets();
-        });
+        let [wallet] = new MockProvider().getWallets();
 
         it('Should revert when deploying contract with empty name', async () => {
             await expect(deployContract(wallet, ContractJson, ['', 10]))
@@ -47,23 +43,23 @@ describe('Activity contract', async () => {
         })
 
         it('Should change reward', async () => {
-            await activity.setReward(20);
+            await activity.setReward(20, {gasLimit: 100000});
             const reward = await activity.reward();
 
             expect(reward).to.deep.equal(BigNumber.from(20));
         });
 
         it('Should emit event after changing reward', async () => {
-            await expect(activity.setReward(20)).to.emit(activity, 'RewardChanged')
-                .withArgs('Name', BigNumber.from(1), BigNumber.from(20));
+            await expect(activity.setReward(20, {gasLimit: 100000})).to.emit(activity, 'RewardChanged')
+                .withArgs(BigNumber.from(1), BigNumber.from(20));
         });
 
         it('Should revert when changing reward to zero', async () => {
-            await expect(activity.setReward(0)).to.be.revertedWith('Reward must be greater than 0');
+            await expect(activity.setReward(0, {gasLimit: 100000})).to.be.revertedWith('Reward must be greater than 0');
         });
 
         it('Should revert when changing reward to current value', async () => {
-            await expect(activity.setReward(1)).to.be.revertedWith('Reward must be different');
+            await expect(activity.setReward(1, {gasLimit: 100000})).to.be.revertedWith('Reward must be different');
         });
     });
 
@@ -77,19 +73,19 @@ describe('Activity contract', async () => {
         })
 
         it('Should change name', async () => {
-            await activity.setName('NewName');
+            await activity.setName('NewName', {gasLimit: 100000});
             const name = await activity.name();
 
             expect(name).to.equal('NewName');
         });
 
         it('Should emit event after changing name', async () => {
-            await expect(activity.setName('NewName')).to.emit(activity, 'NameChanged')
+            await expect(activity.setName('NewName', {gasLimit: 100000})).to.emit(activity, 'NameChanged')
                 .withArgs('Name', 'NewName');
         });
 
         it('Should revert when changing name to empty', async () => {
-            await expect(activity.setName('')).to.be.revertedWith('Name must be non-empty');
+            await expect(activity.setName('', {gasLimit: 100000})).to.be.revertedWith('Name must be non-empty');
         });
     });
 });
