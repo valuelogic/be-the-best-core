@@ -2,6 +2,7 @@ import "hardhat-deploy";
 import "@nomiclabs/hardhat-ethers";
 import "@typechain/ethers-v5";
 import { HardhatUserConfig } from "hardhat/config";
+import '@typechain/hardhat';
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
