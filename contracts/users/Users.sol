@@ -11,6 +11,13 @@ contract Users {
     event AddedNewUser(address walletAddress, string nick, bool isAdmin);
     event UpdatedUsersPoints(address walletAddress, uint16 current_points);
 
+    constructor(address[] memory adminAddresses) {
+        require(adminAddresses.length > 0, "At least one admin must be defined.");
+        for (uint i = 0; i < adminAddresses.length; i++) {
+            addUser(adminAddresses[i], 'initial_admin_name', true);
+        }
+    }
+
     function addUser(address walletAddress, string memory nick, bool isAdmin) public {
       require(s_users[walletAddress].walletAddress != walletAddress, "Wallet address already exists");
       s_addresses.push(walletAddress);
