@@ -1,36 +1,34 @@
 import {expect} from "chai";
+import { Contract } from "ethers";
 import {ethers} from "hardhat";
 
 describe("Users contract", async () => {
   const adminUserWallet = await ethers.Wallet.createRandom().getAddress();
+  let usersContract: Contract;
+
+  beforeEach(async () =>{
+    const Users = await ethers.getContractFactory("Users");
+    usersContract = await Users.deploy([adminUserWallet]);
+  })
 
   describe("deploy", () => {
     it("deploys users contract without error", async () => {
-      const Users = await ethers.getContractFactory("Users");
-  
-      const usersContract = await Users.deploy([adminUserWallet]);
-  
       expect(usersContract).not.to.be.null
     });
 
     it("should be reverted when no admin is defined", async () => {
-      const Users = await ethers.getContractFactory("Users");
+      const UsersContract = await ethers.getContractFactory("Users");
 
-      await expect(Users.deploy([]))
+      await expect(UsersContract.deploy([]))
           .to.be.revertedWith('At least one admin must be defined.');
     });
   
     it("deploys users contract with admins", async () => {
-      const Users = await ethers.getContractFactory("Users");
-  
-      const usersContract = await Users.deploy([adminUserWallet]);
-
       const usersList = await usersContract.getUsers();
 
       expect(usersList).to.have.lengthOf(1);
 
       const adminUser = usersList[0];
-
       expect(adminUser.walletAddress).to.equal(adminUserWallet)
       expect(adminUser.nick).to.equal('initial_admin_name')
       expect(adminUser.points).to.equal(0)
@@ -40,15 +38,13 @@ describe("Users contract", async () => {
 
   describe("users list", () => {
     it("should add users", async () => {
-      const Users = await ethers.getContractFactory("Users");
-      const usersContract = await Users.deploy([adminUserWallet]);
-
       const walletAddress = await ethers.Wallet.createRandom().getAddress();
       const nick = "EXPECTED_NICK";
       
       await usersContract.addUser(walletAddress, nick, false);
+
       const usersList = await usersContract.getUsers();
-  
+
       expect(usersList).to.have.lengthOf(2);
 
       const user = usersList[1];
@@ -63,10 +59,7 @@ describe("Users contract", async () => {
       expect(usersListExtended).to.have.lengthOf(3);
     });
 
-    it("should be reverted when added user wallet address have been already used", async function () {
-      const Users = await ethers.getContractFactory("Users");
-      const usersContract = await Users.deploy([adminUserWallet]);
-
+    it("should be reverted when added user wallet address have been already used", async () => {
       const walletAddress = await ethers.Wallet.createRandom().getAddress();
       
       await usersContract.addUser(walletAddress, "nick1", false);
@@ -78,9 +71,6 @@ describe("Users contract", async () => {
 
   describe("add points", () => {
     it("should add points to user", async () => {
-      const Users = await ethers.getContractFactory("Users");
-      const usersContract = await Users.deploy([adminUserWallet]);
-
       const walletAddress = await ethers.Wallet.createRandom().getAddress();
       
       await usersContract.addUser(walletAddress, "nick", false);
@@ -97,9 +87,6 @@ describe("Users contract", async () => {
     });
 
     it("should be reverted when points are not positive number", async () => {
-      const Users = await ethers.getContractFactory("Users");
-      const usersContract = await Users.deploy([adminUserWallet]);
-
       const walletAddress = await ethers.Wallet.createRandom().getAddress();
       
       await usersContract.addUser(walletAddress, "nick1", false);
