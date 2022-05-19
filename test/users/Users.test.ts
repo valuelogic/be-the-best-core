@@ -1,6 +1,5 @@
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
-const { BigNumber } = require("ethers");
+import {expect} from "chai";
+import {ethers} from "hardhat";
 
 describe("Users contract", function () {
   describe("deploy", () => {
@@ -55,8 +54,9 @@ describe("Users contract", function () {
       const walletAddress = await ethers.Wallet.createRandom().getAddress();
       
       await usersContract.addUser(walletAddress, "nick1", false);
-      // TODO: expect to be reverted/rejected
-      // await usersContract.addUser(walletAddress, "nick2", false);
+
+      await expect(usersContract.addUser(walletAddress, "nick2", false))
+          .to.be.revertedWith('Wallet address already exists');
     });
   })
 
@@ -87,8 +87,9 @@ describe("Users contract", function () {
       const walletAddress = await ethers.Wallet.createRandom().getAddress();
       
       await usersContract.addUser(walletAddress, "nick1", false);
-      // TODO: expect to be reverted/rejected
-      //await usersContract.addUser(walletAddress, "nick2", false);
+
+      await expect(usersContract.addPoints(walletAddress, 0))
+          .to.be.revertedWith('Points must be positive number');
     });
   })
 });

@@ -33,7 +33,7 @@ contract Users {
 
    function addPoints(address walletAddress, uint16 points) public {
        require(s_users[walletAddress].walletAddress == walletAddress, "User with passed wallet not exists");
-       require(points > 0, "points must be positive number");
+       require(points > 0, "Points must be positive number");
        // TODO: check if msg sender is admin
        // require(s_users[msg.sender].isAdmin, "msg sender must be admin");
        s_users[walletAddress].points = s_users[walletAddress].points + points;
