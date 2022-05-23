@@ -12,11 +12,17 @@ contract Users {
     event UpdatedUsersPoints(address walletAddress, uint16 current_points);
 
     constructor(address[] memory adminAddresses) {
+        // TODO: dodac msg.sender jako admin, lista adminAddresses opcjonalna
         require(adminAddresses.length > 0, "At least one admin must be defined.");
         for (uint i = 0; i < adminAddresses.length; i++) {
+            // TODO: pusty string nick
             addUser(adminAddresses[i], 'initial_admin_name', true);
         }
     }
+
+    // TODO: setter na isAdmin 
+
+    // TODO: setter na nick
 
     function addUser(address walletAddress, string memory nick, bool isAdmin) public {
       require(s_users[walletAddress].walletAddress != walletAddress, "Wallet address already exists");
@@ -38,11 +44,12 @@ contract Users {
       return result;
   }
 
+   // TODO: make addPoints param int16 points
+
    function addPoints(address walletAddress, uint16 points) public {
        require(s_users[walletAddress].walletAddress == walletAddress, "User with passed wallet not exists");
        require(points > 0, "Points must be positive number");
-       // TODO: check if msg sender is admin
-       // require(s_users[msg.sender].isAdmin, "msg sender must be admin");
+       require(s_users[msg.sender].isAdmin, "msg sender must be admin");
        s_users[walletAddress].points = s_users[walletAddress].points + points;
        emit UpdatedUsersPoints(walletAddress, s_users[walletAddress].points);
    }
