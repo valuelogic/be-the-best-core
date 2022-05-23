@@ -1,33 +1,27 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.8;
 
-import "./Activity.sol";
-
 contract Activities {
-    Activity[] public activities;
+    address[] public activities;
 
-    event ActivityAdded(uint256 index, Activity activity);
+    event ActivityAdded(uint256 index, address activity);
     event ActivityDeleted(uint256 index);
-    event ActivityUpdated(uint256 index, Activity oldActivity, Activity newActivity);
+    event ActivityUpdated(uint256 index, address oldActivity, address newActivity);
 
-    constructor() {
-        activities = new Activity[](0);
-    }
-
-    function addActivity(Activity activity) external {
+    function addActivity(address activity) external {
         activities.push(activity);
         emit ActivityAdded(activities.length - 1, activity);
     }
 
-    function getActivity(uint index) external indexInBounds(index) view returns (Activity) {
+    function getActivity(uint index) external indexInBounds(index) view returns (address) {
         return activities[index];
     }
 
-    function getActivities() external view returns (Activity[] memory) {
+    function getActivities() external view returns (address[] memory) {
         return activities;
     }
 
-    function updateActivity(uint index, Activity activity) external indexInBounds(index) {
+    function updateActivity(uint index, address activity) external indexInBounds(index) {
         emit ActivityUpdated(index, activities[index], activity);
         activities[index] = activity;
     }
