@@ -4,13 +4,12 @@ pragma solidity ^0.8.8;
 contract Activities {
     address[] public s_activities;
 
-    event ActivityAdded(uint256 index, address activity);
-    event ActivityDeleted(uint256 index);
-    event ActivityUpdated(uint256 index, address oldActivity, address newActivity);
+    event ActivityAdded(address activity);
+    event ActivityDeleted(address activity);
 
     function addActivity(address activity) external {
         s_activities.push(activity);
-        emit ActivityAdded(s_activities.length - 1, activity);
+        emit ActivityAdded(activity);
     }
 
     function getActivity(uint index) external indexInBounds(index) view returns (address) {
@@ -21,15 +20,10 @@ contract Activities {
         return s_activities;
     }
 
-    function updateActivity(uint index, address activity) external indexInBounds(index) {
-        emit ActivityUpdated(index, s_activities[index], activity);
-        s_activities[index] = activity;
-    }
-
     function deleteActivity(uint index) external indexInBounds(index) {
+        emit ActivityDeleted(s_activities[index]);
         s_activities[index] = s_activities[s_activities.length - 1];
         s_activities.pop();
-        emit ActivityDeleted(index);
     }
 
     modifier indexInBounds(uint index) {

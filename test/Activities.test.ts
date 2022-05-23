@@ -29,7 +29,7 @@ describe('Activities contract', () => {
             const activity = await deployMockContract(wallet, Activity__factory.abi);
 
             await expect(contract.addActivity(activity.address, {gasLimit: 1000000}))
-                .to.emit(contract, 'ActivityAdded').withArgs(0, activity.address);
+                .to.emit(contract, 'ActivityAdded').withArgs(activity.address);
         });
     });
 
@@ -118,42 +118,7 @@ describe('Activities contract', () => {
             await contract.addActivity(activity2.address, {gasLimit: 1000000});
 
             await expect(contract.deleteActivity(1, {gasLimit: 1000000}))
-                .to.emit(contract, 'ActivityDeleted').withArgs(1);
+                .to.emit(contract, 'ActivityDeleted').withArgs(activity2.address);
         });
-    });
-
-    describe('update activity', () => {
-        const [wallet] = new MockProvider().getWallets();
-        let contract: Activities;
-
-        beforeEach(async () => {
-            const factory = await ethers.getContractFactory<Activities__factory>('Activities', wallet);
-            contract = await factory.deploy();
-        })
-
-        it('should revert transaction when does not exist', async () => {
-            await expect(contract.updateActivity(0, '0x0000000000000000000000000000000000000000', {gasLimit: 1000000}))
-                .to.be.revertedWith('Index out of bounds');
-        });
-
-        it('should update the activity', async() => {
-            const activity1 = await deployMockContract(wallet, Activity__factory.abi);
-            await contract.addActivity(activity1.address, {gasLimit: 1000000});
-
-            const activity2 = await deployMockContract(wallet, Activity__factory.abi);
-            await contract.updateActivity(0, activity2.address, {gasLimit: 1000000});
-
-            const updatedActivity = await contract.getActivity(0, {gasLimit: 1000000});
-            await expect(updatedActivity).to.equal(activity2.address);
-        });
-
-        it('should emit event', async() => {
-            const activity1 = await deployMockContract(wallet, Activity__factory.abi);
-            await contract.addActivity(activity1.address, {gasLimit: 1000000});
-
-            const activity2 = await deployMockContract(wallet, Activity__factory.abi);
-            await expect(contract.updateActivity(0, activity2.address, {gasLimit: 1000000}))
-                .to.emit(contract, 'ActivityUpdated').withArgs(0, activity1.address, activity2.address);
-        })
     });
 });
