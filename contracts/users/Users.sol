@@ -11,12 +11,20 @@ contract Users {
     event AddedNewUser(address walletAddress, string nick, bool isAdmin);
     event UpdatedUsersPoints(address walletAddress, uint16 current_points);
     event UpdatedUsersNick(address walletAddress, string new_nick);
+    event UpdatedUsersAdminRole(address walletAddress, bool new_role);
 
     constructor() {
         addUser(msg.sender, '', true);
     }
 
-    // TODO: setter na isAdmin 
+    function setAdmin(address walletAddress, bool isAdmin) public {
+        require(s_users[msg.sender].isAdmin, "msg sender must be admin");
+        require(s_users[walletAddress].walletAddress == walletAddress, "User with passed wallet not exists");
+        
+        s_users[walletAddress].isAdmin = isAdmin;
+        
+        emit UpdatedUsersAdminRole(walletAddress, isAdmin);
+    }
 
     function setNick(address walletAddress, string memory nick) public {
         require(s_users[msg.sender].isAdmin, "msg sender must be admin");

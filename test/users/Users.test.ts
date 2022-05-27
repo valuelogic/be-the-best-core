@@ -3,6 +3,7 @@ import { Contract } from "ethers";
 import {ethers} from "hardhat";
 import {deployContract, MockProvider, solidity} from 'ethereum-waffle';
 import UsersToken from "../../artifacts/contracts/users/Users.sol/Users.json";
+import { truncate } from "fs/promises";
 
 describe("Users contract", async () => {
   const [adminWallet, userWallet1, userWallet2] = new MockProvider().getWallets();
@@ -118,6 +119,29 @@ describe("Users contract", async () => {
     it("should be reverted when action performed by non admin user", async () => {
       await usersContract.addUser(userWallet1.address, "nick1", false);
       await expect(usersContract.connect(userWallet1).setNick(userWallet1.address, "nick"))
+          .to.be.revertedWith('msg sender must be admin');
+    });
+  })
+
+  describe("setAdmin", () => {
+    it('should change users admin role', async () => {
+      await usersContract.addUser(userWallet1.address, "nick", false);
+      const user = await usersContract.getUser(userWallet1.address);
+      expect(user.isAdmin).to.equal(false)
+
+      await usersContract.setAdmin(userWallet1.address, true);
+      const result = await usersContract.getUser(userWallet1.address);
+      expect(result.isAdmin).to.equal(true)
+    });
+
+    it("should be reverted when user not exists", async () => {
+      await expect(usersContract.setAdmin(userWallet1.address, true))
+          .to.be.revertedWith('User with passed wallet not exists');
+    });
+
+    it("should be reverted when action performed by non admin user", async () => {
+      await usersContract.addUser(userWallet1.address, "nick1", false);
+      await expect(usersContract.connect(userWallet1).setAdmin(userWallet1.address, true))
           .to.be.revertedWith('msg sender must be admin');
     });
   })
