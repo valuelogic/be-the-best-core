@@ -10,6 +10,7 @@ contract Users {
 
     event AddedNewUser(address walletAddress, string nick, bool isAdmin);
     event UpdatedUsersPoints(address walletAddress, uint16 current_points);
+    event UpdatedUsersNick(address walletAddress, string new_nick);
 
     constructor() {
         addUser(msg.sender, '', true);
@@ -17,12 +18,22 @@ contract Users {
 
     // TODO: setter na isAdmin 
 
-    // TODO: setter na nick
+    function setNick(address walletAddress, string memory nick) public {
+        require(s_users[msg.sender].isAdmin, "msg sender must be admin");
+        require(s_users[walletAddress].walletAddress == walletAddress, "User with passed wallet not exists");
+        require(bytes(nick).length < 21, "Nickname cannot have more than 20 bytes.");
+        
+        s_users[walletAddress].nick = nick;
+        
+        emit UpdatedUsersNick(walletAddress, nick);
+    }
 
     function addUser(address walletAddress, string memory nick, bool isAdmin) public {
       require(s_users[walletAddress].walletAddress != walletAddress, "Wallet address already exists");
+
       s_addresses.push(walletAddress);
       s_users[walletAddress] = SharedModel.User(walletAddress, nick, 0, isAdmin);
+
       emit AddedNewUser(s_users[walletAddress].walletAddress, s_users[walletAddress].nick, s_users[walletAddress].isAdmin);
    }
 
@@ -42,10 +53,12 @@ contract Users {
    // TODO: make addPoints param int16 points
 
    function addPoints(address walletAddress, uint16 points) public {
+       require(s_users[msg.sender].isAdmin, "msg sender must be admin");
        require(s_users[walletAddress].walletAddress == walletAddress, "User with passed wallet not exists");
        require(points > 0, "Points must be positive number");
-       require(s_users[msg.sender].isAdmin, "msg sender must be admin");
-       s_users[walletAddress].points = s_users[walletAddress].points + points;
+
+       s_users[walletAddress].points += points;
+
        emit UpdatedUsersPoints(walletAddress, s_users[walletAddress].points);
    }
 }

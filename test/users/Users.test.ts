@@ -93,4 +93,32 @@ describe("Users contract", async () => {
           .to.be.revertedWith('msg sender must be admin');
     });
   })
+
+  describe("setNick", () => {
+    it('should change users nick', async () => {
+      await usersContract.addUser(userWallet1.address, "nick", false);
+      const user = await usersContract.getUser(userWallet1.address);
+      expect(user.nick).to.equal("nick")
+
+      await usersContract.setNick(userWallet1.address, "new_nick");
+      const result = await usersContract.getUser(userWallet1.address);
+      expect(result.nick).to.equal("new_nick")
+    });
+
+    it("should be reverted when nickname is too long", async () => {
+      await expect(usersContract.setNick(adminWallet.address, "nick21characterslong1"))
+          .to.be.revertedWith('Nickname cannot have more than 20 bytes.');
+    });
+
+    it("should be reverted when user not exists", async () => {
+      await expect(usersContract.setNick(userWallet1.address, "nick"))
+          .to.be.revertedWith('User with passed wallet not exists');
+    });
+
+    it("should be reverted when action performed by non admin user", async () => {
+      await usersContract.addUser(userWallet1.address, "nick1", false);
+      await expect(usersContract.connect(userWallet1).setNick(userWallet1.address, "nick"))
+          .to.be.revertedWith('msg sender must be admin');
+    });
+  })
 });
