@@ -1,9 +1,7 @@
-import {expect} from "chai";
+import { expect } from "chai";
 import { Contract } from "ethers";
-import {ethers} from "hardhat";
-import {deployContract, MockProvider, solidity} from 'ethereum-waffle';
+import { deployContract, MockProvider } from 'ethereum-waffle';
 import UsersToken from "../../artifacts/contracts/users/Users.sol/Users.json";
-import { truncate } from "fs/promises";
 
 describe("Users contract", async () => {
   const [adminWallet, userWallet1, userWallet2] = new MockProvider().getWallets();
@@ -74,13 +72,10 @@ describe("Users contract", async () => {
       await usersContract.addPoints(userWallet1.address, 3);
       const userWith5Points = await usersContract.getUser(userWallet1.address);
       expect(userWith5Points.points).to.equal(5);
-    });
 
-    it("should be reverted when points are not positive number", async () => {
-      await usersContract.addUser(userWallet1.address, "nick1", false);
-
-      await expect(usersContract.addPoints(userWallet1.address, 0))
-          .to.be.revertedWith('Points must be positive number');
+      await usersContract.addPoints(userWallet1.address, -4);
+      const userWith1Points = await usersContract.getUser(userWallet1.address);
+      expect(userWith1Points.points).to.equal(1);
     });
 
     it("should be reverted when user not exists", async () => {

@@ -9,7 +9,7 @@ contract Users {
     address[] public s_addresses;
 
     event AddedNewUser(address walletAddress, string nick, bool isAdmin);
-    event UpdatedUsersPoints(address walletAddress, uint16 current_points);
+    event UpdatedUsersPoints(address walletAddress, int16 current_points);
     event UpdatedUsersNick(address walletAddress, string new_nick);
     event UpdatedUsersAdminRole(address walletAddress, bool new_role);
 
@@ -58,12 +58,9 @@ contract Users {
       return result;
   }
 
-   // TODO: make addPoints param int16 points
-
-   function addPoints(address walletAddress, uint16 points) public {
+   function addPoints(address walletAddress, int16 points) public {
        require(s_users[msg.sender].isAdmin, "msg sender must be admin");
        require(s_users[walletAddress].walletAddress == walletAddress, "User with passed wallet not exists");
-       require(points > 0, "Points must be positive number");
 
        s_users[walletAddress].points += points;
 

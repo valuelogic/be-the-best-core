@@ -5,7 +5,7 @@ library SharedModel {
     struct User {
         address walletAddress;
         string nick;
-        uint16 points;
+        int16 points;
         bool isAdmin;
     }
 }
