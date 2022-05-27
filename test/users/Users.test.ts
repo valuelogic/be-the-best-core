@@ -9,7 +9,7 @@ describe("Users contract", async () => {
   let usersContract: Contract;
 
   beforeEach(async () => {
-    usersContract = await deployContract(adminWallet, UsersToken, [[adminWallet.address]]);
+    usersContract = await deployContract(adminWallet, UsersToken);
   });
 
   describe("deploy", () => {
@@ -17,20 +17,14 @@ describe("Users contract", async () => {
       expect(usersContract).not.to.be.null
     });
 
-    it("should be reverted when no admin is defined", async () => {
-      const Users = await ethers.getContractFactory("Users");
-      await expect(Users.deploy([]))
-          .to.be.revertedWith('At least one admin must be defined.');
-    });
-  
-    it("deploys users contract with admins", async () => {
+    it("deploys users contract with admin", async () => {
       const usersList = await usersContract.getUsers();
 
       expect(usersList).to.have.lengthOf(1);
 
       const adminUser = usersList[0];
       expect(adminUser.walletAddress).to.equal(adminWallet.address)
-      expect(adminUser.nick).to.equal('initial_admin_name')
+      expect(adminUser.nick).to.equal('')
       expect(adminUser.points).to.equal(0)
       expect(adminUser.isAdmin).to.be.true
     });

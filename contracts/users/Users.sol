@@ -11,13 +11,8 @@ contract Users {
     event AddedNewUser(address walletAddress, string nick, bool isAdmin);
     event UpdatedUsersPoints(address walletAddress, uint16 current_points);
 
-    constructor(address[] memory adminAddresses) {
-        // TODO: dodac msg.sender jako admin, lista adminAddresses opcjonalna
-        require(adminAddresses.length > 0, "At least one admin must be defined.");
-        for (uint i = 0; i < adminAddresses.length; i++) {
-            // TODO: pusty string nick
-            addUser(adminAddresses[i], 'initial_admin_name', true);
-        }
+    constructor() {
+        addUser(msg.sender, '', true);
     }
 
     // TODO: setter na isAdmin 
