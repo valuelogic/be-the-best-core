@@ -32,7 +32,7 @@ describe("Users contract", async () => {
   describe("users list", () => {
     it("should add users", async () => {
       const nick = "EXPECTED_NICK";
-      
+
       await usersContract.addUser(userWallet1.address, nick, false);
 
       const usersList = await usersContract.getUsers();
@@ -45,17 +45,17 @@ describe("Users contract", async () => {
       expect(user.nick).to.equal(nick)
       expect(user.points).to.equal(0)
       expect(user.isAdmin).to.be.false
-  
+
       await usersContract.addUser(userWallet2.address, "random nick", true);
       const usersListExtended = await usersContract.getUsers();
       expect(usersListExtended).to.have.lengthOf(3);
     });
 
-    it("should be reverted when added user wallet address have been already used", async () => {      
+    it("should be reverted when added user wallet address have been already used", async () => {
       await usersContract.addUser(userWallet1.address, "nick1", false);
 
       await expect(usersContract.addUser(userWallet1.address, "nick2", false))
-          .to.be.revertedWith('Wallet address already exists');
+        .to.be.revertedWith('Wallet address already exists');
     });
   })
 
@@ -78,15 +78,29 @@ describe("Users contract", async () => {
       expect(userWith1Points.points).to.equal(1);
     });
 
+    it("should not save less then 0 points", async () => {
+      await usersContract.addUser(userWallet1.address, "nick", false);
+      const user = await usersContract.getUser(userWallet1.address);
+      expect(user.points).to.equal(0)
+
+      await usersContract.addPoints(userWallet1.address, 2);
+      const userWith2Points = await usersContract.getUser(userWallet1.address);
+      expect(userWith2Points.points).to.equal(2)
+
+      await usersContract.addPoints(userWallet1.address, -3);
+      const userWith0Points = await usersContract.getUser(userWallet1.address);
+      expect(userWith0Points.points).to.equal(0);
+    });
+
     it("should be reverted when user not exists", async () => {
       await expect(usersContract.addPoints(userWallet1.address, 4))
-          .to.be.revertedWith('User with passed wallet not exists');
+        .to.be.revertedWith('User with passed wallet not exists');
     });
 
     it("should be reverted when action performed by non admin user", async () => {
       await usersContract.addUser(userWallet1.address, "nick1", false);
       await expect(usersContract.connect(userWallet1).addPoints(userWallet1.address, 2))
-          .to.be.revertedWith('msg sender must be admin');
+        .to.be.revertedWith('msg sender must be admin');
     });
   })
 
@@ -103,18 +117,18 @@ describe("Users contract", async () => {
 
     it("should be reverted when nickname is too long", async () => {
       await expect(usersContract.setNick(adminWallet.address, "nick21characterslong1"))
-          .to.be.revertedWith('Nickname cannot have more than 20 bytes.');
+        .to.be.revertedWith('Nickname cannot have more than 20 bytes.');
     });
 
     it("should be reverted when user not exists", async () => {
       await expect(usersContract.setNick(userWallet1.address, "nick"))
-          .to.be.revertedWith('User with passed wallet not exists');
+        .to.be.revertedWith('User with passed wallet not exists');
     });
 
     it("should be reverted when action performed by non admin user", async () => {
       await usersContract.addUser(userWallet1.address, "nick1", false);
       await expect(usersContract.connect(userWallet1).setNick(userWallet1.address, "nick"))
-          .to.be.revertedWith('msg sender must be admin');
+        .to.be.revertedWith('msg sender must be admin');
     });
   })
 
@@ -131,13 +145,13 @@ describe("Users contract", async () => {
 
     it("should be reverted when user not exists", async () => {
       await expect(usersContract.setAdmin(userWallet1.address, true))
-          .to.be.revertedWith('User with passed wallet not exists');
+        .to.be.revertedWith('User with passed wallet not exists');
     });
 
     it("should be reverted when action performed by non admin user", async () => {
       await usersContract.addUser(userWallet1.address, "nick1", false);
       await expect(usersContract.connect(userWallet1).setAdmin(userWallet1.address, true))
-          .to.be.revertedWith('msg sender must be admin');
+        .to.be.revertedWith('msg sender must be admin');
     });
   })
 });
