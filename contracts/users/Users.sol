@@ -35,7 +35,6 @@ contract Users {
     }
 
     function setNick(address walletAddress, string memory nick) public onlyAdmin walletExists(walletAddress){
-        require(bytes(nick).length < 21, "Nickname cannot have more than 20 bytes.");
         s_users[walletAddress].nick = nick;
 
         emit UpdatedUsersNick(walletAddress, nick);
@@ -51,9 +50,9 @@ contract Users {
         s_users[walletAddress] = SharedModel.User(walletAddress, nick, 0, isAdmin);
 
         emit AddedNewUser(
-            s_users[walletAddress].walletAddress,
-            s_users[walletAddress].nick,
-            s_users[walletAddress].isAdmin
+            walletAddress,
+            nick,
+            isAdmin
         );
     }
 
@@ -69,20 +68,19 @@ contract Users {
         return result;
     }
 
-    function addPoints(address walletAddress, int32 points) public onlyAdmin {
-        require(
-            s_users[walletAddress].walletAddress == walletAddress,
-            "User with passed wallet not exists"
-        );
+    function addPoints(address walletAddress, uint32 points) public onlyAdmin walletExists(walletAddress) {
+        s_users[walletAddress].points += points;
 
-        int32 result_points = int32(s_users[walletAddress].points) + points;
+        emit UpdatedUsersPoints(walletAddress, points);
+    }
 
-        if (result_points > 0) {
-            s_users[walletAddress].points = uint32(result_points);
-        } else {
+    function substractPoints(address walletAddress, uint32 points) public onlyAdmin walletExists(walletAddress) {
+        if(s_users[walletAddress].points < points) {
             s_users[walletAddress].points = 0;
+        } else {
+            s_users[walletAddress].points -= points;
         }
-
+        
         emit UpdatedUsersPoints(walletAddress, s_users[walletAddress].points);
     }
 }
