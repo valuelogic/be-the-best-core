@@ -71,7 +71,7 @@ contract Users {
     function addPoints(address walletAddress, uint32 points) public onlyAdmin walletExists(walletAddress) {
         s_users[walletAddress].points += points;
 
-        emit UpdatedUsersPoints(walletAddress, points);
+        emit UpdatedUsersPoints(walletAddress, s_users[walletAddress].points);
     }
 
     function substractPoints(address walletAddress, uint32 points) public onlyAdmin walletExists(walletAddress) {
