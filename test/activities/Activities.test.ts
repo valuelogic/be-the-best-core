@@ -1,7 +1,7 @@
 import {deployContract, deployMockContract, MockProvider, solidity} from "ethereum-waffle";
 import {expect, use} from "chai";
-import ContractJson from "../artifacts/contracts/Activities.sol/Activities.json";
-import {Activities, Activities__factory, Activity__factory} from "../typechain-types";
+import ContractJson from "../../artifacts/contracts/activities/Activities.sol/Activities.json";
+import {Activities, Activities__factory, Activity__factory} from "../../typechain-types";
 import {ethers} from "hardhat";
 
 use(solidity);

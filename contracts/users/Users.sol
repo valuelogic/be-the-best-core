@@ -10,7 +10,7 @@ contract Users {
     event AddedNewUser(address indexed walletAddress, string nick, bool isAdmin);
     event UpdatedUsersPoints(address indexed walletAddress, uint32 current_points);
     event UpdatedUsersNick(address indexed walletAddress, string new_nick);
-    event UpdatedUsersAdminRole(address indexed walletAddress, bool new_role);
+    event UpdatedUsersAdminRole(address indexed walletAddress, bool isAdmin);
 
     constructor() {
         addUser(msg.sender, "", true);
