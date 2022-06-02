@@ -1,29 +1,40 @@
-import "hardhat-deploy";
 import "@nomiclabs/hardhat-ethers";
-import "@typechain/ethers-v5";
+import "@nomiclabs/hardhat-waffle";
+import "@nomiclabs/hardhat-etherscan";
+import "@nomiclabs/hardhat-etherscan";
+import "solidity-coverage";
+import "@typechain/hardhat";
+import "hardhat-deploy";
+import "dotenv/config";
 import { HardhatUserConfig } from "hardhat/config";
-import '@typechain/hardhat';
 
+const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
+const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY || "";
+const MUMBAIN_RPC_URL = process.env.MUMBAIN_RPC_URL || "";
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   solidity: "0.8.8",
   networks: {
     hardhat: {
-      chainId: 31337
+      chainId: 31337,
     },
     localhost: {
-      chainId: 31337
+      chainId: 31337,
     },
     mumbai: {
       chainId: 80001,
-      url: "https://rpc-mumbai.matic.today"
-    }
+      url: MUMBAIN_RPC_URL,
+      accounts: [PRIVATE_KEY],
+    },
+  },
+  etherscan: {
+    apiKey: POLYGONSCAN_API_KEY,
   },
   namedAccounts: {
     deployer: {
-      default: 0
-    }
-  }
-}
+      default: 0,
+    },
+  },
+};
 
 export default config;

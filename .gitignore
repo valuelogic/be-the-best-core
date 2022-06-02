@@ -11,3 +11,7 @@ typechain-types
 
 #IDE
 .idea/sonarlint
+
+
+#Others
+.env

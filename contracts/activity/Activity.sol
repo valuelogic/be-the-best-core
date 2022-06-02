@@ -1,33 +1,63 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.8;
 
+import "../users/Users.sol";
+
 contract Activity {
-    string public name;
-    uint8 public reward;
+    bool s_active;
+    uint8 public s_reward;
+    Users s_users;
+    string public s_name;
 
     event RewardChanged(uint8 _oldReward, uint8 _newReward);
     event NameChanged(string _oldName, string _newName);
+    event Activated();
+    event Deactivated();
 
-    constructor(string memory _name, uint8 _reward) {
+    modifier onlyAdmin() {
+        require(s_users.getUser(msg.sender).isAdmin, "You are not an admin.");
+        _;
+    }
+
+    constructor(
+        string memory _name,
+        uint8 _reward,
+        address _usersAddress
+    ) {
         require(bytes(_name).length > 0, "Name must be non-empty");
         require(_reward > 0, "Reward must be greater than 0");
 
-        name = _name;
-        reward = _reward;
+        s_active = false;
+        s_name = _name;
+        s_reward = _reward;
+        s_users = Users(_usersAddress);
     }
 
-    function setName(string memory _newName) external {
+    function isActive() external view returns (bool) {
+        return s_active;
+    }
+
+    function setName(string memory _newName) external onlyAdmin {
         require(bytes(_newName).length > 0, "Name must be non-empty");
-        emit NameChanged(name, _newName);
-        name = _newName;
+        emit NameChanged(s_name, _newName);
+        s_name = _newName;
     }
 
-    function setReward(uint8 _reward) external {
+    function setReward(uint8 _reward) external onlyAdmin {
         require(_reward > 0, "Reward must be greater than 0");
-        require(_reward != reward, "Reward must be different");
+        require(_reward != s_reward, "Reward must be different");
 
-        // todo: reward can be modified only by the admin
-        emit RewardChanged(reward, _reward);
-        reward = _reward;
+        emit RewardChanged(s_reward, _reward);
+        s_reward = _reward;
+    }
+
+    function deactivate() external onlyAdmin {
+        s_active = false;
+        emit Deactivated();
+    }
+
+    function activate() external onlyAdmin {
+        s_active = true;
+        emit Activated();
     }
 }
