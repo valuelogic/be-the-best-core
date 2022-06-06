@@ -1,7 +1,11 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.8;
 
-import "../users/Users.sol";
+import "./Users.sol";
+import "hardhat/console.sol";
+
+error Activity__EmptyName();
+error Activity_ZeroReward();
 
 contract Activity {
     bool s_active;
@@ -15,21 +19,27 @@ contract Activity {
     event Deactivated();
 
     modifier onlyAdmin() {
-        require(s_users.getUser(msg.sender).isAdmin, "You are not an admin.");
+        s_users.ensureIsAdmin(msg.sender);
         _;
     }
 
     constructor(
         string memory _name,
         uint8 _reward,
+        bool _active,
         address _usersAddress
     ) {
-        require(bytes(_name).length > 0, "Name must be non-empty");
-        require(_reward > 0, "Reward must be greater than 0");
+        if (bytes(_name).length == 0) {
+            revert Activity__EmptyName();
+        }
 
-        s_active = false;
+        if (_reward == 0) {
+            revert Activity_ZeroReward();
+        }
+
         s_name = _name;
         s_reward = _reward;
+        s_active = _active;
         s_users = Users(_usersAddress);
     }
 
@@ -38,14 +48,17 @@ contract Activity {
     }
 
     function setName(string memory _newName) external onlyAdmin {
-        require(bytes(_newName).length > 0, "Name must be non-empty");
+        if (bytes(_newName).length == 0) {
+            revert Activity__EmptyName();
+        }
         emit NameChanged(s_name, _newName);
         s_name = _newName;
     }
 
     function setReward(uint8 _reward) external onlyAdmin {
-        require(_reward > 0, "Reward must be greater than 0");
-        require(_reward != s_reward, "Reward must be different");
+        if (_reward == 0) {
+            revert Activity_ZeroReward();
+        }
 
         emit RewardChanged(s_reward, _reward);
         s_reward = _reward;

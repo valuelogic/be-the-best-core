@@ -1,18 +1,18 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.8;
 
-import "../users/Users.sol";
-import "../activity/Activity.sol";
+import "./Users.sol";
+import "./Activity.sol";
 
 contract Activities {
     Users s_users;
     address[] s_activities;
 
-    event ActivityAdded(address activity);
+    event ActivityCreated(address activity);
     event ActivityDeleted(address activity);
 
     modifier onlyAdmin() {
-        require(s_users.getUser(msg.sender).isAdmin, "You are not an admin.");
+        s_users.ensureIsAdmin(msg.sender);
         _;
     }
 
@@ -20,15 +20,15 @@ contract Activities {
         s_users = Users(_usersAddress);
     }
 
-    function createActivity(string memory _name, uint8 _reward)
+    function createActivity(string memory _name, uint8 _reward, bool active)
         external
         onlyAdmin
     {
         address activityAddress = address(
-            new Activity(_name, _reward, address(s_users))
+            new Activity(_name, _reward, active, address(s_users))
         );
         s_activities.push(activityAddress);
-        emit ActivityAdded(activityAddress);
+        emit ActivityCreated(activityAddress);
     }
 
     function getActivities() external view returns (address[] memory) {
