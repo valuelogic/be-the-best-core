@@ -1,34 +1,17 @@
-import { deployMockContract } from "@ethereum-waffle/mock-contract";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect, use } from "chai";
-import {
-  deployContract,
-  MockContract,
-  MockProvider,
-  solidity,
-} from "ethereum-waffle";
-import {
-  Activities,
-  Activities__factory,
-  Activity__factory,
-  Users__factory,
-} from "../typechain-types";
+import { solidity } from "ethereum-waffle";
+import { deployments, ethers } from "hardhat";
+import { Activities } from "../typechain-types";
 
 use(solidity);
 
 describe("Activities contract", () => {
-  let [admin, normalUser] = new MockProvider().getWallets();
-  let usersContract: MockContract;
   let activitiesContract: Activities;
 
   beforeEach(async () => {
-    usersContract = await deployMockContract(admin, Users__factory.abi);
-    await usersContract.mock.ensureIsAdmin
-      .withArgs(normalUser.address)
-      .revertsWithReason("Users__NotAnAdmin");
-    await usersContract.mock.ensureIsAdmin.withArgs(admin.address).returns();
-    activitiesContract = (await deployContract(admin, Activities__factory, [
-      usersContract.address,
-    ])) as Activities;
+    await deployments.fixture("all");
+    activitiesContract = await ethers.getContract("Activities");
   });
 
   describe("Deploy", () => {
@@ -38,15 +21,13 @@ describe("Activities contract", () => {
   });
 
   describe("Add activity", async () => {
-    let activity: MockContract;
     const name = "Create a presentation";
     const reward = 100;
     const active = true;
-
+    let normalUser: SignerWithAddress;
     beforeEach(async () => {
-      activity = await deployMockContract(admin, Activity__factory.abi);
+      [, normalUser] = await ethers.getSigners();
     });
-
     it("Should emit ActivityCreated event", async () => {
       await expect(
         activitiesContract.createActivity(name, reward, active)
@@ -69,8 +50,6 @@ describe("Activities contract", () => {
     });
 
     it("Should return an array with one activity", async () => {
-      const activity1 = await deployMockContract(admin, Activity__factory.abi);
-      const activity2 = await deployMockContract(admin, Activity__factory.abi);
       await activitiesContract.createActivity("First", 100, true);
       await activitiesContract.createActivity("Second", 50, true);
 

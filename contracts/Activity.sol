@@ -5,7 +5,7 @@ import "./Users.sol";
 import "hardhat/console.sol";
 
 error Activity__EmptyName();
-error Activity_ZeroReward();
+error Activity__ZeroReward();
 
 contract Activity {
     bool s_active;
@@ -34,7 +34,7 @@ contract Activity {
         }
 
         if (_reward == 0) {
-            revert Activity_ZeroReward();
+            revert Activity__ZeroReward();
         }
 
         s_name = _name;
@@ -57,7 +57,7 @@ contract Activity {
 
     function setReward(uint8 _reward) external onlyAdmin {
         if (_reward == 0) {
-            revert Activity_ZeroReward();
+            revert Activity__ZeroReward();
         }
 
         emit RewardChanged(s_reward, _reward);

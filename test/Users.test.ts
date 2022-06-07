@@ -1,19 +1,25 @@
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { deployContract, MockProvider } from "ethereum-waffle";
-import UsersToken from "../artifacts/contracts/Users.sol/Users.json";
+import { MockProvider } from "ethereum-waffle";
+import { deployments, ethers } from "hardhat";
 import { Users } from "../typechain-types";
 
 describe("Users contract", async () => {
-  const [adminWallet, userWallet1, userWallet2] =
-    new MockProvider().getWallets();
+  let adminWallet: SignerWithAddress,
+    userWallet1: SignerWithAddress,
+    userWallet2: SignerWithAddress;
   let usersContract: Users;
 
+  const user = (await ethers.getSigners())[1];
+
   beforeEach(async () => {
-    usersContract = (await deployContract(adminWallet, UsersToken)) as Users;
+    [adminWallet, userWallet1, userWallet2] = await ethers.getSigners();
+    await deployments.fixture("users");
+    usersContract = await ethers.getContract("Users");
   });
 
   describe("Deploy", () => {
-    it("Deploys users contract without error", async () => {
+    it.only("Deploys users contract without error", async () => {
       expect(usersContract).not.to.be.null;
     });
 
@@ -79,14 +85,16 @@ describe("Users contract", async () => {
     it("should be reverted when user not exists", async () => {
       await expect(
         usersContract.addPoints(userWallet1.address, 4)
-      ).to.be.revertedWith("User with passed wallet not exists");
+      ).to.be.revertedWith("Users_WalletNotExists");
     });
 
     it("should be reverted when action performed by non admin user", async () => {
       await usersContract.addUser(userWallet1.address, "nick1", false);
       await expect(
-        usersContract.connect(userWallet1).addPoints(userWallet1.address, 2)
-      ).to.be.revertedWith("msg sender must be admin");
+        usersContract
+          .connect(user)
+          .addPoints(userWallet1.address, 2, { gasLimit: 1000000 })
+      ).to.be.revertedWith("Users__NotAnAdmin");
     });
   });
 
@@ -171,7 +179,7 @@ describe("Users contract", async () => {
       expect(result.isAdmin).to.equal(true);
     });
 
-    it("should be reverted when user not exists", async () => {
+    it.only("should be reverted when user not exists", async () => {
       await expect(
         usersContract.setAdmin(userWallet1.address, true)
       ).to.be.revertedWith("Users_WalletNotExists");
