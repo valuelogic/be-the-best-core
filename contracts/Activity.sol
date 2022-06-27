@@ -2,7 +2,6 @@
 pragma solidity ^0.8.8;
 
 import "./Users.sol";
-import "hardhat/console.sol";
 
 error Activity__EmptyName();
 error Activity__ZeroReward();

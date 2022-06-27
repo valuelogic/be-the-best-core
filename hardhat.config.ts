@@ -10,7 +10,7 @@ import { HardhatUserConfig } from "hardhat/config";
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
 const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY || "";
-const MUMBAIN_RPC_URL = process.env.MUMBAIN_RPC_URL || "";
+const MUMBAI_RPC_URL = process.env.MUMBAI_RPC_URL || "";
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   solidity: "0.8.8",
@@ -23,7 +23,7 @@ const config: HardhatUserConfig = {
     },
     mumbai: {
       chainId: 80001,
-      url: MUMBAIN_RPC_URL,
+      url: MUMBAI_RPC_URL,
       accounts: [PRIVATE_KEY],
     },
   },

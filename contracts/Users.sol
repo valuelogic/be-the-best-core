@@ -4,8 +4,8 @@ pragma solidity ^0.8.8;
 import "./Model.sol";
 
 error Users__NotAnAdmin(address _wallet);
-error Users_WalletNotExists(address _wallet);
-error Users_WalletAlreadyExists(address _wallet);
+error Users__WalletNotExists(address _wallet);
+error Users__WalletAlreadyExists(address _wallet);
 
 contract Users {
     mapping(address => SharedModel.User) s_users;
@@ -45,7 +45,7 @@ contract Users {
 
     function ensureWalletExists(address _walletAddress) public view {
         if (s_users[_walletAddress].walletAddress != _walletAddress) {
-            revert Users_WalletNotExists(_walletAddress);
+            revert Users__WalletNotExists(_walletAddress);
         }
     }
 
@@ -74,7 +74,7 @@ contract Users {
         bool _isAdmin
     ) public {
         if(s_users[_walletAddress].walletAddress == _walletAddress) {
-            revert Users_WalletAlreadyExists(_walletAddress);
+            revert Users__WalletAlreadyExists(_walletAddress);
         }
         
 

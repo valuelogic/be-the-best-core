@@ -9,7 +9,6 @@ contract Activities {
     address[] s_activities;
 
     event ActivityCreated(address activity);
-    event ActivityDeleted(address activity);
 
     modifier onlyAdmin() {
         s_users.ensureIsAdmin(msg.sender);
@@ -20,12 +19,12 @@ contract Activities {
         s_users = Users(_usersAddress);
     }
 
-    function createActivity(string memory _name, uint8 _reward, bool active)
+    function createActivity(string memory _name, uint8 _reward, bool _active)
         external
         onlyAdmin
     {
         address activityAddress = address(
-            new Activity(_name, _reward, active, address(s_users))
+            new Activity(_name, _reward, _active, address(s_users))
         );
         s_activities.push(activityAddress);
         emit ActivityCreated(activityAddress);
