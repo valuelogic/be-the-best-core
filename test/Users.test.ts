@@ -1,6 +1,5 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { MockProvider } from "ethereum-waffle";
 import { deployments, ethers } from "hardhat";
 import { Users } from "../typechain-types";
 
@@ -63,7 +62,7 @@ describe("Users contract", async () => {
 
       await expect(
         usersContract.addUser(userWallet1.address, "nick2", false)
-      ).to.be.revertedWith("Users_WalletAlreadyExists");
+      ).to.be.revertedWith("Users__WalletAlreadyExists");
     });
   });
 
@@ -85,7 +84,7 @@ describe("Users contract", async () => {
     it("should be reverted when user not exists", async () => {
       await expect(
         usersContract.addPoints(userWallet1.address, 4)
-      ).to.be.revertedWith("Users_WalletNotExists");
+      ).to.be.revertedWith("Users__WalletNotExists");
     });
 
     it("should be reverted when action performed by non admin user", async () => {
@@ -130,7 +129,7 @@ describe("Users contract", async () => {
     it("should be reverted when user not exists", async () => {
       await expect(
         usersContract.substractPoints(userWallet1.address, 4)
-      ).to.be.revertedWith("Users_WalletNotExists");
+      ).to.be.revertedWith("Users__WalletNotExists");
     });
 
     it("should be reverted when action performed by non admin user", async () => {
@@ -157,7 +156,7 @@ describe("Users contract", async () => {
     it("should be reverted when user not exists", async () => {
       await expect(
         usersContract.setNick(userWallet1.address, "nick")
-      ).to.be.revertedWith("Users_WalletNotExists");
+      ).to.be.revertedWith("Users__WalletNotExists");
     });
 
     it("should be reverted when action performed by non admin user", async () => {
@@ -182,7 +181,7 @@ describe("Users contract", async () => {
     it.only("should be reverted when user not exists", async () => {
       await expect(
         usersContract.setAdmin(userWallet1.address, true)
-      ).to.be.revertedWith("Users_WalletNotExists");
+      ).to.be.revertedWith("Users__WalletNotExists");
     });
 
     it("should be reverted when action performed by non admin user", async () => {
