@@ -5,10 +5,10 @@ import "./Activity.sol";
 import "./Authorization.sol";
 
 contract Activities {
-    event ActivityCreated(address activity);
-
     Authorization s_authorization;
     address[] s_activities;
+
+    event ActivityCreated(address activity);
 
     constructor(Authorization _authorizationAddress) {
         s_authorization = _authorizationAddress;

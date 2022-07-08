@@ -7,15 +7,20 @@ error Activity__EmptyName();
 error Activity__ZeroReward();
 
 contract Activity {
+    bool s_active;
+    uint8 public s_reward;
+    Authorization s_authorization;
+    string public s_name;
+
     event RewardChanged(uint8 _oldReward, uint8 _newReward);
     event NameChanged(string _oldName, string _newName);
     event Activated();
     event Deactivated();
 
-    bool s_active;
-    uint8 public s_reward;
-    Authorization s_authorization;
-    string public s_name;
+    modifier onlyRole(bytes32 _role) {
+        s_authorization.ensureHasRole(_role, msg.sender);
+        _;
+    }
 
     constructor(
         string memory _name,
@@ -35,11 +40,6 @@ contract Activity {
         s_reward = _reward;
         s_active = _active;
         s_authorization = _authorizationAddress;
-    }
-
-    modifier onlyRole(bytes32 _role) {
-        s_authorization.ensureHasRole(_role, msg.sender);
-        _;
     }
 
     function isActive() external view returns (bool) {

@@ -5,18 +5,18 @@ import "./Model.sol";
 import "./Requests.sol";
 import "./Authorization.sol";
 
-    error Players__AccountNotRegistered(address _account);
-    error Players__AccountAlreadyRegistered(address _account);
+error Players__AccountNotRegistered(address _account);
+error Players__AccountAlreadyRegistered(address _account);
 
 contract Players {
-    event AddedNewPlayer(address indexed walletAddress, string nick);
-    event UpdatedPlayersPoints(address indexed walletAddress, uint32 currentPoints);
-    event UpdatedPlayersNick(address indexed _walletAddress, string _newNick);
-
     mapping(address => SharedModel.Player) s_players;
     address[] s_addresses;
     Requests private s_requests;
     Authorization private s_authorization;
+
+    event AddedNewPlayer(address indexed walletAddress, string nick);
+    event UpdatedPlayersPoints( address indexed walletAddress, uint32 currentPoints);
+    event UpdatedPlayersNick(address indexed _walletAddress, string _newNick);
 
     constructor(Authorization _authorization) {
         s_authorization = _authorization;
@@ -64,9 +64,9 @@ contract Players {
     }
 
     function getPlayer(address _walletAddress)
-    external
-    view
-    returns (SharedModel.Player memory)
+        external
+        view
+        returns (SharedModel.Player memory)
     {
         return s_players[_walletAddress];
     }
@@ -82,9 +82,9 @@ contract Players {
     }
 
     function addPoints(address _player, uint32 _points)
-    public
-    onlyRole(s_authorization.ADMIN())
-    walletExists(_player)
+        public
+        onlyRole(s_authorization.ADMIN())
+        walletExists(_player)
     {
         s_players[_player].points += _points;
 
@@ -92,9 +92,9 @@ contract Players {
     }
 
     function substractPoints(address _player, uint32 _points)
-    public
-    onlyRole(s_authorization.ADMIN())
-    walletExists(_player)
+        public
+        onlyRole(s_authorization.ADMIN())
+        walletExists(_player)
     {
         if (s_players[_player].points < _points) {
             s_players[_player].points = 0;
