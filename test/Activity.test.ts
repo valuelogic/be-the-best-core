@@ -1,38 +1,33 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect, use } from "chai";
 import {
-  deployContract,
-  deployMockContract,
-  MockContract,
-  MockProvider,
   solidity,
 } from "ethereum-waffle";
 import { BigNumber } from "ethers";
 import { deployments, ethers } from "hardhat";
 import {
-  Activity,
-  Activity__factory,
-  Users,
-  Users__factory,
+  Activity, Authorization,
 } from "../typechain-types";
 use(solidity);
 
 describe("Activity contract", () => {
   let admin: SignerWithAddress;
   let normalUser: SignerWithAddress;
-  let usersContract: Users;
+  let authorizationContract: Authorization;
   const { deploy } = deployments;
+
   beforeEach(async () => {
     [admin, normalUser] = await ethers.getSigners();
-    await deployments.fixture(["users", "setupMockUsers"]);
-    usersContract = await ethers.getContract("Users");
+    await deployments.fixture(["authorization", "players", "playersManager", "setupMockPlayers"]);
+    authorizationContract = await ethers.getContract("Authorization");
   });
+
   describe("Deploy", async () => {
     it("Should revert when deploying contract with empty name", async () => {
       await expect(
         deploy("Activity", {
           from: admin.address,
-          args: ["", 10, true, usersContract.address],
+          args: ["", 10, true, authorizationContract.address],
         })
       ).to.be.revertedWith("Activity__EmptyName");
     });
@@ -41,7 +36,7 @@ describe("Activity contract", () => {
       await expect(
         deploy("Activity", {
           from: admin.address,
-          args: ["Name", 0, true, usersContract.address],
+          args: ["Name", 0, true, authorizationContract.address],
         })
       ).to.be.revertedWith("Activity__ZeroReward");
     });
@@ -49,7 +44,7 @@ describe("Activity contract", () => {
     it("Should deploy contract with given name and reward", async () => {
       const activity = await deploy("Activity", {
         from: admin.address,
-        args: ["Name", 1, true, usersContract.address],
+        args: ["Name", 1, true, authorizationContract.address],
       });
 
       const activityContract: Activity = await ethers.getContractAt(
@@ -70,7 +65,7 @@ describe("Activity contract", () => {
     beforeEach(async () => {
       const activity = await deploy("Activity", {
         from: admin.address,
-        args: ["Name", 1, true, usersContract.address],
+        args: ["Name", 1, true, authorizationContract.address],
       });
       activityContract = await ethers.getContractAt("Activity", activity.address);
     });
@@ -98,7 +93,7 @@ describe("Activity contract", () => {
       it("Should revert when not and admin", async () => {
         await expect(
           activityContract.connect(normalUser).setReward(0)
-        ).to.be.revertedWith("Users__NotAnAdmin");
+        ).to.be.revertedWith("Authorization__MissingRole"); // TODO: Check user and role that are in args
       });
     });
 
@@ -125,7 +120,7 @@ describe("Activity contract", () => {
       it("Should revert when not and admin", async () => {
         await expect(
           activityContract.connect(normalUser).setName("NewName")
-        ).to.be.revertedWith("Users__NotAnAdmin");
+        ).to.be.revertedWith("Authorization__MissingRole"); // TODO: Check user and role that are in args
       });
     });
   });

@@ -28,5 +28,8 @@
     "node": "npx hardhat node",
     "script": "npx hardhat run --network localhost",
     "deploy": "npx hardhat deploy"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.7.0"
   }
 }

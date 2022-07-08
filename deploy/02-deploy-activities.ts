@@ -9,8 +9,8 @@ const deployActivities: DeployFunction = async (
   const { deploy, get } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const users = await get("Users");
-  const args = [users.address];
+  const authorization = await get("Authorization");
+  const args = [authorization.address];
 
   const activites = await deploy("Activities", {
     from: deployer,

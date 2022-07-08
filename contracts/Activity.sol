@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.8;
 
-import "./Users.sol";
+import "./Authorization.sol";
 
 error Activity__EmptyName();
 error Activity__ZeroReward();
@@ -9,7 +9,7 @@ error Activity__ZeroReward();
 contract Activity {
     bool s_active;
     uint8 public s_reward;
-    Users s_users;
+    Authorization s_authorization;
     string public s_name;
 
     event RewardChanged(uint8 _oldReward, uint8 _newReward);
@@ -17,8 +17,8 @@ contract Activity {
     event Activated();
     event Deactivated();
 
-    modifier onlyAdmin() {
-        s_users.ensureIsAdmin(msg.sender);
+    modifier onlyRole(bytes32 _role) {
+        s_authorization.ensureHasRole(_role, msg.sender);
         _;
     }
 
@@ -26,7 +26,7 @@ contract Activity {
         string memory _name,
         uint8 _reward,
         bool _active,
-        address _usersAddress
+        Authorization _authorizationAddress
     ) {
         if (bytes(_name).length == 0) {
             revert Activity__EmptyName();
@@ -39,14 +39,14 @@ contract Activity {
         s_name = _name;
         s_reward = _reward;
         s_active = _active;
-        s_users = Users(_usersAddress);
+        s_authorization = _authorizationAddress;
     }
 
     function isActive() external view returns (bool) {
         return s_active;
     }
 
-    function setName(string memory _newName) external onlyAdmin {
+    function setName(string memory _newName) external onlyRole(s_authorization.ADMIN()) {
         if (bytes(_newName).length == 0) {
             revert Activity__EmptyName();
         }
@@ -54,7 +54,7 @@ contract Activity {
         s_name = _newName;
     }
 
-    function setReward(uint8 _reward) external onlyAdmin {
+    function setReward(uint8 _reward) external onlyRole(s_authorization.ADMIN()) {
         if (_reward == 0) {
             revert Activity__ZeroReward();
         }
@@ -63,12 +63,12 @@ contract Activity {
         s_reward = _reward;
     }
 
-    function deactivate() external onlyAdmin {
+    function deactivate() external onlyRole(s_authorization.ADMIN()) {
         s_active = false;
         emit Deactivated();
     }
 
-    function activate() external onlyAdmin {
+    function activate() external onlyRole(s_authorization.ADMIN()) {
         s_active = true;
         emit Activated();
     }

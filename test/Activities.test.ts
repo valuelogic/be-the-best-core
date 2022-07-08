@@ -39,7 +39,7 @@ describe("Activities contract", () => {
         activitiesContract
           .connect(normalUser)
           .createActivity(name, reward, active)
-      ).to.be.revertedWith("Users__NotAnAdmin");
+      ).to.be.revertedWith("Authorization__MissingRole"); // TODO: Add args to revertedWith?
     });
   });
 

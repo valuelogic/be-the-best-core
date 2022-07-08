@@ -2,22 +2,24 @@ import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { developmentChains, networkConfig } from "../helper-hardhat-config";
 import verify from "../utils/verify";
-const deployUsers: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-  const { deployments, network, getNamedAccounts } = hre;
-  const { deploy} = deployments;
+const deployPlayers: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
+  const { deployments: { deploy, get }, network, getNamedAccounts } = hre;
   const { deployer } = await getNamedAccounts();
 
-  const users = await deploy("Users", {
+  const authorizationContract = await get('Authorization');
+  const args = [authorizationContract.address];
+
+  const users = await deploy("Players", {
     from: deployer,
-    args: [],
+    args: args,
     log: true,
     waitConfirmations: networkConfig[network.name].blockConfirmation || 0,
   });
 
   if (!developmentChains.includes(network.name)) {
-    await verify(users.address, []);
+    await verify(users.address, args);
   }
 };
 
-export default deployUsers;
-deployUsers.tags = ["all", "users"];
+export default deployPlayers;
+deployPlayers.tags = ["all", "players"];
