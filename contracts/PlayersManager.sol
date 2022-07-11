@@ -12,7 +12,12 @@ contract PlayersManager {
         s_players = _players;
     }
 
-    function addPlayer(address _account, string memory _nick, bool _isAdmin) external {
+    modifier onlyAdmin() {
+        s_authorization.ensureHasRole(s_authorization.ADMIN(), msg.sender);
+        _;
+    }
+
+    function addPlayer(address _account, string memory _nick, bool _isAdmin) external onlyAdmin {
         bytes32 adminRole = s_authorization.ADMIN();
         s_authorization.ensureHasRole(adminRole, msg.sender);
 
