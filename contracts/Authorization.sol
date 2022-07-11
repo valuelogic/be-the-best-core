@@ -8,17 +8,12 @@ error Authorization__MissingOneOfRoles(bytes32[] roles, address account);
 
 contract Authorization is AccessControl {
     bytes32 public constant ADMIN = keccak256('ADMIN');
-    bytes32 public constant USER_MANAGER = keccak256('USER_MANAGER');
-    bytes32 public constant REVIEWER = keccak256('REVIEWER');
     bytes32 public constant PLAYER = keccak256('PLAYER');
 
     constructor() {
         _grantRole(ADMIN, msg.sender);
-        _grantRole(USER_MANAGER, msg.sender);
-        _setRoleAdmin(USER_MANAGER, USER_MANAGER);
-        _setRoleAdmin(REVIEWER, USER_MANAGER);
-        _setRoleAdmin(PLAYER, USER_MANAGER);
-        _setRoleAdmin(ADMIN, USER_MANAGER);
+        _setRoleAdmin(ADMIN, ADMIN);
+        _setRoleAdmin(PLAYER, ADMIN);
     }
 
     function ensureHasRole(bytes32 role, address account) external view {

@@ -20,7 +20,7 @@ const deployPlayersManager: DeployFunction = async (hre: HardhatRuntimeEnvironme
     });
 
     const authorization: Authorization = await ethers.getContract("Authorization");
-    await authorization.grantRole(await authorization.USER_MANAGER(), playersManager.address);
+    await authorization.grantRole(await authorization.ADMIN(), playersManager.address);
 
     if (!developmentChains.includes(network.name)) {
         await verify(playersManager.address, args);
