@@ -9,7 +9,7 @@ library SharedModel {
     }
 
     struct Request {
-        address user;
+        address player;
         address activity;
         uint32 points;
         RequestStatus status;

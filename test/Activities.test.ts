@@ -24,9 +24,9 @@ describe("Activities contract", () => {
     const name = "Create a presentation";
     const reward = 100;
     const active = true;
-    let normalUser: SignerWithAddress;
+    let player: SignerWithAddress;
     beforeEach(async () => {
-      [, normalUser] = await ethers.getSigners();
+      [, player] = await ethers.getSigners();
     });
     it("Should emit ActivityCreated event", async () => {
       await expect(
@@ -37,7 +37,7 @@ describe("Activities contract", () => {
     it("Should revert when not an admin", async () => {
       await expect(
         activitiesContract
-          .connect(normalUser)
+          .connect(player)
           .createActivity(name, reward, active)
       ).to.be.revertedWith("Authorization__MissingRole"); // TODO: Add args to revertedWith?
     });

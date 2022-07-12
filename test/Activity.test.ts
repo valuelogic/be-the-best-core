@@ -12,12 +12,12 @@ use(solidity);
 
 describe("Activity contract", () => {
   let admin: SignerWithAddress;
-  let normalUser: SignerWithAddress;
+  let player: SignerWithAddress;
   let authorizationContract: Authorization;
   const { deploy } = deployments;
 
   beforeEach(async () => {
-    [admin, normalUser] = await ethers.getSigners();
+    [admin, player] = await ethers.getSigners();
     await deployments.fixture(["authorization", "players", "playersManager", "setupMockPlayers"]);
     authorizationContract = await ethers.getContract("Authorization");
   });
@@ -92,7 +92,7 @@ describe("Activity contract", () => {
 
       it("Should revert when not and admin", async () => {
         await expect(
-          activityContract.connect(normalUser).setReward(0)
+          activityContract.connect(player).setReward(0)
         ).to.be.revertedWith("Authorization__MissingRole"); // TODO: Check user and role that are in args
       });
     });
@@ -119,7 +119,7 @@ describe("Activity contract", () => {
 
       it("Should revert when not and admin", async () => {
         await expect(
-          activityContract.connect(normalUser).setName("NewName")
+          activityContract.connect(player).setName("NewName")
         ).to.be.revertedWith("Authorization__MissingRole"); // TODO: Check user and role that are in args
       });
     });

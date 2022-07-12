@@ -5,8 +5,8 @@ import "./Model.sol";
 import "./Requests.sol";
 import "./Authorization.sol";
 
-error Players__AccountNotRegistered(address _account);
-error Players__AccountAlreadyRegistered(address _account);
+    error Players__AccountNotRegistered(address _account);
+    error Players__AccountAlreadyRegistered(address _account);
 
 contract Players {
     mapping(address => SharedModel.Player) s_players;
@@ -15,7 +15,7 @@ contract Players {
     Authorization private s_authorization;
 
     event AddedNewPlayer(address indexed walletAddress, string nick);
-    event UpdatedPlayersPoints( address indexed walletAddress, uint32 currentPoints);
+    event UpdatedPlayersPoints(address indexed walletAddress, uint32 currentPoints);
     event UpdatedPlayersNick(address indexed _walletAddress, string _newNick);
 
     modifier onlyRole(bytes32 _role) {
@@ -38,10 +38,7 @@ contract Players {
         }
     }
 
-    function setNick(address _walletAddress, string memory _nick)
-        public
-        onlyRole(s_authorization.ADMIN())
-        walletExists(_walletAddress)
+    function setNick(address _walletAddress, string memory _nick) public walletExists(_walletAddress)
     {
         s_players[_walletAddress].nick = _nick;
 
@@ -52,7 +49,7 @@ contract Players {
         address _walletAddress,
         string memory _nick
     ) external {
-        if(s_players[_walletAddress].walletAddress == _walletAddress) {
+        if (s_players[_walletAddress].walletAddress == _walletAddress) {
             revert Players__AccountAlreadyRegistered(_walletAddress);
         }
 
@@ -67,9 +64,9 @@ contract Players {
     }
 
     function getPlayer(address _walletAddress)
-        external
-        view
-        returns (SharedModel.Player memory)
+    external
+    view
+    returns (SharedModel.Player memory)
     {
         return s_players[_walletAddress];
     }
@@ -85,29 +82,20 @@ contract Players {
     }
 
     function addPoints(address _player, uint32 _points)
-        public
-        onlyRole(s_authorization.ADMIN())
-        walletExists(_player)
+    public
+    onlyRole(s_authorization.ADMIN())
+    walletExists(_player)
     {
-        // TODO: check if admin is not a requester
-        // TODO: Move changing request status to RequestReviewer contract
-//        s_requests.review(_requestId, SharedModel.RequestStatus.approved);
-//        SharedModel.Request memory request = s_requests.getRequest(_requestId);
-
         s_players[_player].points += _points;
 
         emit UpdatedPlayersPoints(_player, s_players[_player].points);
     }
 
     function substractPoints(address _player, uint32 _points)
-        public
-        onlyRole(s_authorization.ADMIN())
-        walletExists(_player)
+    public
+    onlyRole(s_authorization.ADMIN())
+    walletExists(_player)
     {
-        // TODO: Move changing request status to RequestReviewer contract
-//        s_requests.review(_requestId, SharedModel.RequestStatus.approve d);
-//        SharedModel.Request memory request = s_requests.getRequest(_requestId);
-
         if (s_players[_player].points < _points) {
             s_players[_player].points = 0;
         } else {

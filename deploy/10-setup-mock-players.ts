@@ -7,13 +7,13 @@ import {PlayersManager} from "../typechain-types";
 const setupMockPlayers: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const {network, getUnnamedAccounts} = hre;
     const {deployer} = await getNamedAccounts();
-    const [user1, user2] = await getUnnamedAccounts();
+    const [player1, player2] = await getUnnamedAccounts();
 
     if (developmentChains.includes(network.name)) {
         const playersManager: PlayersManager = await ethers.getContract("PlayersManager");
         await playersManager.addPlayer(deployer, "Deployer", true);
-        await playersManager.addPlayer(user1, "First", false);
-        await playersManager.addPlayer(user2, "Second", false);
+        await playersManager.addPlayer(player1, "First", false);
+        await playersManager.addPlayer(player2, "Second", false);
     }
 };
 

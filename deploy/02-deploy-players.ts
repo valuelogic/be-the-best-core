@@ -9,7 +9,7 @@ const deployPlayers: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
   const authorizationContract = await get('Authorization');
   const args = [authorizationContract.address];
 
-  const users = await deploy("Players", {
+  const players = await deploy("Players", {
     from: deployer,
     args: args,
     log: true,
@@ -17,7 +17,7 @@ const deployPlayers: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
   });
 
   if (!developmentChains.includes(network.name)) {
-    await verify(users.address, args);
+    await verify(players.address, args);
   }
 };
 

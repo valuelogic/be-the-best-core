@@ -63,6 +63,10 @@ contract Activity {
         s_reward = _reward;
     }
 
+    function getReward() external view returns (uint8) {
+        return s_reward;
+    }
+
     function deactivate() external onlyRole(s_authorization.ADMIN()) {
         s_active = false;
         emit Deactivated();
