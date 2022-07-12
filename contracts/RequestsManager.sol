@@ -10,11 +10,11 @@ error RequestsManager__SelfReviewAttempt(address _adminAddress, uint256 _request
 error RequestsManager__StatusOutOfRange(address _adminAddress, uint256 _requestId, SharedModel.RequestStatus _status);
 
 contract RequestsManager {
-    event RequestReviewed(address indexed _reviewer, uint256 _requestId, SharedModel.RequestStatus _status);
-
     Authorization private s_authorization;
     Requests private s_requests;
     Players private s_players;
+
+    event RequestReviewed(address indexed _reviewer, uint256 _requestId, SharedModel.RequestStatus _status);
 
     constructor(Authorization _authorization, Requests _requests, Players _players) {
         s_authorization = _authorization;

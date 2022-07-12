@@ -9,11 +9,11 @@ error Requests__ActivityInactive(address player, address activity);
 error Requests__AlreadyReviewed(uint requestId);
 
 contract Requests {
-    event RequestAdded(address indexed player, address indexed activity);
-    event RequestReviewed(address indexed player, address indexed activity, SharedModel.RequestStatus status);
-
     SharedModel.Request[] private s_requests;
     Authorization private s_authorization;
+
+    event RequestAdded(address indexed player, address indexed activity);
+    event RequestReviewed(address indexed player, address indexed activity, SharedModel.RequestStatus status);
 
     constructor(Authorization _authorization) {
         s_authorization = _authorization;
