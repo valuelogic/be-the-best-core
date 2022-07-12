@@ -38,7 +38,7 @@ contract Players {
         }
     }
 
-    function setNick(address _walletAddress, string memory _nick) public walletExists(_walletAddress)
+    function setNick(address _walletAddress, string memory _nick) public onlyRole(s_authorization.ADMIN()) walletExists(_walletAddress)
     {
         s_players[_walletAddress].nick = _nick;
 

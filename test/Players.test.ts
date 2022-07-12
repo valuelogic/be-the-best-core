@@ -145,5 +145,12 @@ describe("Players contract", async () => {
         playersContract.setNick(playerWallet1.address, "nick")
       ).to.be.revertedWith("Players__AccountNotRegistered"); // TODO: check arguments
     });
+
+    it("should be reverted when action performed by non admin player", async () => {
+      await playersContract.addPlayer(playerWallet1.address, "nick1");
+      await expect(
+        playersContract.connect(playerWallet1).setNick(playerWallet1.address, "nick")
+      ).to.be.revertedWith("Authorization__MissingRole");
+    });
   });
 });
