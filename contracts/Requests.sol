@@ -4,29 +4,21 @@ pragma solidity ^0.8.8;
 import "./Activity.sol";
 import "./Authorization.sol";
 import "./Model.sol";
+import "./libraries/Roles.sol";
 
 error Requests__ActivityInactive(address player, address activity);
 error Requests__AlreadyReviewed(uint requestId);
 
-contract Requests {
+contract Requests is Protected {
     SharedModel.Request[] private s_requests;
-    Authorization private s_authorization;
 
     event RequestAdded(address indexed player, address indexed activity);
     event RequestReviewed(address indexed player, address indexed activity, SharedModel.RequestStatus status);
 
-    constructor(Authorization _authorization) {
-        s_authorization = _authorization;
+    constructor(Authorization _authorization) Protected(_authorization) {
     }
 
-    modifier onlyRole(bytes32 _role) {
-        // Probably we should create const for ADMIN role in this contract with byte value to lower gas price
-        s_authorization.ensureHasRole(_role, msg.sender);
-        _;
-    }
-
-    // Maybe we should add const for PLAYER to lower gas cost for execution
-    function request(address _activity) external onlyRole(s_authorization.PLAYER()) {
+    function request(address _activity) external onlyRole(Roles.PLAYER) {
         Activity activity = Activity(_activity);
         if(!activity.isActive()) {
             revert Requests__ActivityInactive(msg.sender, _activity);
@@ -36,7 +28,7 @@ contract Requests {
         emit RequestAdded(msg.sender, _activity);
     }
 
-    function review(uint _requestId, SharedModel.RequestStatus _status) external onlyRole(s_authorization.ADMIN()) {
+    function review(uint _requestId, SharedModel.RequestStatus _status) external onlyRole(Roles.ADMIN) {
         if (s_requests[_requestId].status != SharedModel.RequestStatus.pending) {
             revert Requests__AlreadyReviewed(_requestId);
         }

@@ -3,23 +3,18 @@ pragma solidity ^0.8.8;
 
 import "./Activity.sol";
 import "./Authorization.sol";
+import "./libraries/Roles.sol";
+import "./Protected.sol";
 
-contract Activities {
-    Authorization s_authorization;
-    address[] s_activities;
+contract Activities is Protected {
+    address[] private s_activities;
 
     event ActivityCreated(address activity);
 
-    constructor(Authorization _authorizationAddress) {
-        s_authorization = _authorizationAddress;
+    constructor(Authorization _authorizationAddress) Protected(_authorizationAddress) {
     }
 
-    modifier onlyRole(bytes32 _role) {
-        s_authorization.ensureHasRole(_role, msg.sender);
-        _;
-    }
-
-    function createActivity(string memory _name, uint8 _reward, bool _active) external onlyRole(s_authorization.ADMIN())
+    function createActivity(string memory _name, uint8 _reward, bool _active) external onlyRole(Roles.ADMIN)
     {
         address activityAddress = address(new Activity(_name, _reward, _active, s_authorization));
         s_activities.push(activityAddress);

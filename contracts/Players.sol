@@ -8,27 +8,28 @@ import "./Authorization.sol";
     error Players__AccountNotRegistered(address _account);
     error Players__AccountAlreadyRegistered(address _account);
 
-contract Players {
+contract Players is Protected {
     mapping(address => SharedModel.Player) s_players;
     address[] s_addresses;
     Requests private s_requests;
-    Authorization private s_authorization;
 
     event AddedNewPlayer(address indexed walletAddress, string nick);
     event UpdatedPlayersPoints(address indexed walletAddress, uint32 currentPoints);
     event UpdatedPlayersNick(address indexed _walletAddress, string _newNick);
 
-    constructor(Authorization _authorization) {
-        s_authorization = _authorization;
+    constructor(Authorization _authorization) Protected(_authorization) {
     }
 
-    modifier onlyRole(bytes32 _role) {
-        s_authorization.ensureHasRole(_role, msg.sender);
+    // TODO: Think If this modifier is necessary as we can check If users has PLAYER role assigned
+    modifier walletExists(address _walletAddress) {
+        ensureWalletExists(_walletAddress);
         _;
     }
 
-    modifier walletExists(address _walletAddress) {
-        ensureWalletExists(_walletAddress);
+    modifier adminOrModifiedPlayer(address _player) {
+        if(!s_authorization.hasRole(Roles.ADMIN, msg.sender) && !s_authorization.hasRole(Roles.PLAYER, msg.sender) && msg.sender != _player) {
+            revert Players__UnauthorizedChangeAttempt(msg.sender, _player);
+        }
         _;
     }
 
@@ -83,7 +84,7 @@ contract Players {
 
     function addPoints(address _player, uint32 _points)
     public
-    onlyRole(s_authorization.ADMIN())
+    onlyRole(Roles.ADMIN)
     walletExists(_player)
     {
         s_players[_player].points += _points;
@@ -93,7 +94,7 @@ contract Players {
 
     function substractPoints(address _player, uint32 _points)
     public
-    onlyRole(s_authorization.ADMIN())
+    onlyRole(Roles.ADMIN)
     walletExists(_player)
     {
         if (s_players[_player].points < _points) {

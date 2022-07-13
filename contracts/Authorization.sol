@@ -2,18 +2,16 @@
 pragma solidity ^0.8.8;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "./libraries/Roles.sol";
 
 error Authorization__MissingRole(bytes32 role, address account);
 error Authorization__MissingOneOfRoles(bytes32[] roles, address account);
 
 contract Authorization is AccessControl {
-    bytes32 public constant ADMIN = keccak256('ADMIN');
-    bytes32 public constant PLAYER = keccak256('PLAYER');
-
     constructor() {
-        _grantRole(ADMIN, msg.sender);
-        _setRoleAdmin(ADMIN, ADMIN);
-        _setRoleAdmin(PLAYER, ADMIN);
+        _grantRole(Roles.ADMIN, msg.sender);
+        _setRoleAdmin(Roles.ADMIN, Roles.ADMIN);
+        _setRoleAdmin(Roles.PLAYER, Roles.ADMIN);
     }
 
     function ensureHasRole(bytes32 role, address account) external view {
