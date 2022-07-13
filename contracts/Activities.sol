@@ -5,18 +5,18 @@ import "./Activity.sol";
 import "./Authorization.sol";
 
 contract Activities {
+    event ActivityCreated(address activity);
+
     Authorization s_authorization;
     address[] s_activities;
 
-    event ActivityCreated(address activity);
+    constructor(Authorization _authorizationAddress) {
+        s_authorization = _authorizationAddress;
+    }
 
     modifier onlyRole(bytes32 _role) {
         s_authorization.ensureHasRole(_role, msg.sender);
         _;
-    }
-
-    constructor(Authorization _authorizationAddress) {
-        s_authorization = _authorizationAddress;
     }
 
     function createActivity(string memory _name, uint8 _reward, bool _active) external onlyRole(s_authorization.ADMIN())

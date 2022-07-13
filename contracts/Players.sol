@@ -9,14 +9,18 @@ import "./Authorization.sol";
     error Players__AccountAlreadyRegistered(address _account);
 
 contract Players {
+    event AddedNewPlayer(address indexed walletAddress, string nick);
+    event UpdatedPlayersPoints(address indexed walletAddress, uint32 currentPoints);
+    event UpdatedPlayersNick(address indexed _walletAddress, string _newNick);
+
     mapping(address => SharedModel.Player) s_players;
     address[] s_addresses;
     Requests private s_requests;
     Authorization private s_authorization;
 
-    event AddedNewPlayer(address indexed walletAddress, string nick);
-    event UpdatedPlayersPoints(address indexed walletAddress, uint32 currentPoints);
-    event UpdatedPlayersNick(address indexed _walletAddress, string _newNick);
+    constructor(Authorization _authorization) {
+        s_authorization = _authorization;
+    }
 
     modifier onlyRole(bytes32 _role) {
         s_authorization.ensureHasRole(_role, msg.sender);
@@ -26,10 +30,6 @@ contract Players {
     modifier walletExists(address _walletAddress) {
         ensureWalletExists(_walletAddress);
         _;
-    }
-
-    constructor(Authorization _authorization) {
-        s_authorization = _authorization;
     }
 
     function ensureWalletExists(address _walletAddress) public view {
