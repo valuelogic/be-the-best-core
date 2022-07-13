@@ -5,8 +5,9 @@ import "./Model.sol";
 import "./Requests.sol";
 import "./Authorization.sol";
 
-    error Players__AccountNotRegistered(address _account);
-    error Players__AccountAlreadyRegistered(address _account);
+error Players__AccountNotRegistered(address _player);
+error Players__AccountAlreadyRegistered(address _player);
+error Players__UnauthorizedChangeAttempt(address _modifier, address _player);
 
 contract Players is Protected {
     mapping(address => SharedModel.Player) s_players;
@@ -39,7 +40,7 @@ contract Players is Protected {
         }
     }
 
-    function setNick(address _walletAddress, string memory _nick) public onlyRole(s_authorization.ADMIN()) walletExists(_walletAddress)
+    function setNick(address _walletAddress, string memory _nick) public adminOrModifiedPlayer(_walletAddress) walletExists(_walletAddress)
     {
         s_players[_walletAddress].nick = _nick;
 
