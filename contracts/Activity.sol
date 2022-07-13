@@ -18,10 +18,10 @@ contract Activity is Protected {
     event Activated();
     event Deactivated();
 
-    modifier onlyRole(bytes32 _role) {
-        s_authorization.ensureHasRole(_role, msg.sender);
-        _;
-    }
+    bool s_active;
+    uint8 public s_reward;
+    Authorization s_authorization;
+    string public s_name;
 
     constructor(
         string memory _name,
@@ -40,6 +40,11 @@ contract Activity is Protected {
         s_name = _name;
         s_reward = _reward;
         s_active = _active;
+    }
+
+    modifier onlyRole(bytes32 _role) {
+        s_authorization.ensureHasRole(_role, msg.sender);
+        _;
     }
 
     function isActive() external view returns (bool) {

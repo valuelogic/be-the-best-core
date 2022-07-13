@@ -13,9 +13,9 @@ contract Players is Protected {
     address[] s_addresses;
     Requests private s_requests;
 
-    event AddedNewPlayer(address indexed walletAddress, string nick);
-    event UpdatedPlayersPoints(address indexed walletAddress, uint32 currentPoints);
-    event UpdatedPlayersNick(address indexed _walletAddress, string _newNick);
+    constructor(Authorization _authorization) {
+        s_authorization = _authorization;
+    }
 
     constructor(Authorization _authorization) Protected(_authorization) {
     }
