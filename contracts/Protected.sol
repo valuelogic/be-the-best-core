@@ -2,6 +2,8 @@
 
 import "./Authorization.sol";
 
+error Protected__MissingRole(bytes32 role, address account);
+
 contract Protected {
     Authorization internal s_authorization;
 
@@ -10,7 +12,9 @@ contract Protected {
     }
 
     modifier onlyRole(bytes32 _role) {
-        s_authorization.ensureHasRole(_role, msg.sender);
+        if(!s_authorization.hasRole(role, account)) {
+            revert Protected__MissingRole(role, account);
+        }
         _;
     }
 }

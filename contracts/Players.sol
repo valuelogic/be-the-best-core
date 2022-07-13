@@ -18,8 +18,7 @@ contract Players is Protected {
     address[] s_addresses;
     Requests private s_requests;
 
-    constructor(Authorization _authorization) Protected(_authorization) {
-    }
+    constructor(Authorization _authorization) Protected(_authorization) {}
 
     // TODO: Think If this modifier is necessary as we can check If users has PLAYER role assigned
     modifier walletExists(address _walletAddress) {
