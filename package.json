@@ -24,9 +24,12 @@
   "scripts": {
     "clean": "npx hardhat clean",
     "compile": "npx hardhat compile",
-    "test": "npx hardhat test",
+    "test": "npx hardhat typechain && npx hardhat test",
     "node": "npx hardhat node",
     "script": "npx hardhat run --network localhost",
     "deploy": "npx hardhat deploy"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.7.0"
   }
 }
