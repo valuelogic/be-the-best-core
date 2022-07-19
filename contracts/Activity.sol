@@ -18,10 +18,6 @@ contract Activity is Protected {
     event Activated();
     event Deactivated();
 
-    bool s_active;
-    uint8 public s_reward;
-    string public s_name;
-
     constructor(
         string memory _name,
         uint8 _reward,
