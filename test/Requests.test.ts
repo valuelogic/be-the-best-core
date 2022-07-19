@@ -28,15 +28,15 @@ describe('Requests contract', () => {
 
                 authorization = await deployMockContract(deployer, Authorization__factory.abi);
 
-                await authorization.mock.ensureHasRole.withArgs(PLAYER, deployer.address).returns();
-                await authorization.mock.ensureHasRole.withArgs(ADMIN, deployer.address).returns();
+                await authorization.mock.hasRole.withArgs(PLAYER, deployer.address).returns(true);
+                await authorization.mock.hasRole.withArgs(ADMIN, deployer.address).returns(true);
 
                 requestsContract = await new Requests__factory(deployer).deploy(authorization.address);
             });
 
             it('Should revert when not registered user makes request', async() => {
                 const [address] = await ethers.getUnnamedSigners();
-                await authorization.mock.ensureHasRole.reverts();
+                await authorization.mock.hasRole.returns(false);
                 await expect(requestsContract.connect(address).request(Wallet.createRandom().address)).to.be.reverted;
             });
 
@@ -77,8 +77,8 @@ describe('Requests contract', () => {
                 deployer = await ethers.getNamedSigner('deployer');
 
                 authorization = await deployMockContract(deployer, Authorization__factory.abi);
-                await authorization.mock.ensureHasRole.withArgs(PLAYER, deployer.address).returns();
-                await authorization.mock.ensureHasRole.withArgs(ADMIN, deployer.address).returns();
+                await authorization.mock.hasRole.withArgs(PLAYER, deployer.address).returns(true);
+                await authorization.mock.hasRole.withArgs(ADMIN, deployer.address).returns(true);
 
                 const activity1 = await deployMockContract(deployer, Activity__factory.abi);
                 await activity1.mock.isActive.returns(true);

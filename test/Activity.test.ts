@@ -93,7 +93,7 @@ describe("Activity contract", () => {
       it("Should revert when not and admin", async () => {
         await expect(
           activityContract.connect(player).setReward(0)
-        ).to.be.revertedWith("Authorization__MissingRole"); // TODO: Check user and role that are in args
+        ).to.be.revertedWith("Protected__MissingRole"); // TODO: Check user and role that are in args
       });
     });
 
@@ -120,7 +120,7 @@ describe("Activity contract", () => {
       it("Should revert when not and admin", async () => {
         await expect(
           activityContract.connect(player).setName("NewName")
-        ).to.be.revertedWith("Authorization__MissingRole"); // TODO: Check user and role that are in args
+        ).to.be.revertedWith("Protected__MissingRole"); // TODO: Check user and role that are in args
       });
     });
   });

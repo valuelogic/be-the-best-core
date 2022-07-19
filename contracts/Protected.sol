@@ -1,10 +1,12 @@
 //SPDX-License-Identifier: Unlicense
+pragma solidity ^0.8.8;
 
 import "./Authorization.sol";
 
 error Protected__MissingRole(bytes32 role, address account);
 
 contract Protected {
+
     Authorization internal s_authorization;
 
     constructor(Authorization _authorization) {
@@ -12,8 +14,8 @@ contract Protected {
     }
 
     modifier onlyRole(bytes32 _role) {
-        if(!s_authorization.hasRole(role, account)) {
-            revert Protected__MissingRole(role, account);
+        if(!s_authorization.hasRole(_role, msg.sender)) {
+            revert Protected__MissingRole(_role, msg.sender);
         }
         _;
     }

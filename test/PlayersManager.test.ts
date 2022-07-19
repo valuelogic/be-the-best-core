@@ -31,7 +31,7 @@ describe('PlayersManager contract', () => {
                 const [newAccount, nonAdmin] = await ethers.getUnnamedSigners();
 
                 await expect(playersManagerContract.connect(nonAdmin).addPlayer(newAccount.address, 'Nick', false))
-                    .to.be.revertedWith('Authorization__MissingRole');
+                    .to.be.revertedWith('Protected__MissingRole');
             });
 
             it('Should create player and user with player role only', async () => {

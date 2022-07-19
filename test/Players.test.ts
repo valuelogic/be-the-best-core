@@ -80,7 +80,7 @@ describe("Players contract", async () => {
           playersContract
           .connect(player)
           .addPoints(playerWallet1.address, 2)
-      ).to.be.revertedWith("Authorization__MissingRole"); // TODO: check arguments
+      ).to.be.revertedWith("Protected__MissingRole"); // TODO: check arguments
     });
   });
   
@@ -125,7 +125,7 @@ describe("Players contract", async () => {
         playersContract
           .connect(playerWallet1)
           .substractPoints(playerWallet1.address, 2)
-      ).to.be.revertedWith("Authorization__MissingRole"); // TODO: check args
+      ).to.be.revertedWith("Protected__MissingRole"); // TODO: check args
     });
   });
 

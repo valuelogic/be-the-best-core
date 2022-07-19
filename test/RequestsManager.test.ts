@@ -38,9 +38,9 @@ describe('RequestsManager Contract', () => {
                 [deployer, secondAdmin, nonAdmin] = waffle.provider.getWallets();
 
                 authorization = await waffle.deployMockContract(deployer, Authorization__factory.abi);
-                await authorization.mock.ensureHasRole.withArgs(ADMIN, deployer.address).returns();
-                await authorization.mock.ensureHasRole.withArgs(ADMIN, secondAdmin.address).returns();
-                await authorization.mock.ensureHasRole.withArgs(ADMIN, nonAdmin.address).reverts();
+                await authorization.mock.hasRole.withArgs(ADMIN, deployer.address).returns(true);
+                await authorization.mock.hasRole.withArgs(ADMIN, secondAdmin.address).returns(true);
+                await authorization.mock.hasRole.withArgs(ADMIN, nonAdmin.address).returns(false);
 
                 activity = await waffle.deployMockContract(deployer, Activity__factory.abi);
 
