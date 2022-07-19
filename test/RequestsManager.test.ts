@@ -10,6 +10,7 @@ import {
 } from "../typechain-types";
 import {MockContract} from "ethereum-waffle";
 import {Wallet} from "ethers";
+import {ADMIN} from "../utils/roles";
 
 describe('RequestsManager Contract', () => {
     describe('Deployment', () => {
@@ -29,7 +30,6 @@ describe('RequestsManager Contract', () => {
         let secondAdmin : Wallet;
         let nonAdmin : Wallet;
 
-        const adminBytes = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('ADMIN'));
         const activityPoints = 1;
         const requestId = 0;
 
@@ -38,10 +38,9 @@ describe('RequestsManager Contract', () => {
                 [deployer, secondAdmin, nonAdmin] = waffle.provider.getWallets();
 
                 authorization = await waffle.deployMockContract(deployer, Authorization__factory.abi);
-                await authorization.mock.ADMIN.returns(adminBytes);
-                await authorization.mock.ensureHasRole.withArgs(adminBytes, deployer.address).returns();
-                await authorization.mock.ensureHasRole.withArgs(adminBytes, secondAdmin.address).returns();
-                await authorization.mock.ensureHasRole.withArgs(adminBytes, nonAdmin.address).reverts();
+                await authorization.mock.ensureHasRole.withArgs(ADMIN, deployer.address).returns();
+                await authorization.mock.ensureHasRole.withArgs(ADMIN, secondAdmin.address).returns();
+                await authorization.mock.ensureHasRole.withArgs(ADMIN, nonAdmin.address).reverts();
 
                 activity = await waffle.deployMockContract(deployer, Activity__factory.abi);
 
