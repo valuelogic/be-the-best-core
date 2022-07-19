@@ -5,8 +5,9 @@ import "./Model.sol";
 import "./Requests.sol";
 import "./Authorization.sol";
 
-    error Players__AccountNotRegistered(address _account);
-    error Players__AccountAlreadyRegistered(address _account);
+error Players__AccountNotRegistered(address _player);
+error Players__AccountAlreadyRegistered(address _player);
+error Players__UnauthorizedChangeAttempt(address _modifier, address _player);
 
 contract Players {
     event AddedNewPlayer(address indexed walletAddress, string nick);
@@ -27,8 +28,16 @@ contract Players {
         _;
     }
 
+    // This modifier and check may not be necessary as we can check If users has PLAYER role assigned
     modifier walletExists(address _walletAddress) {
         ensureWalletExists(_walletAddress);
+        _;
+    }
+
+    modifier adminOrModifiedPlayer(address _player) {
+        if(!s_authorization.hasRole(s_authorization.ADMIN(), msg.sender) && !s_authorization.hasRole(s_authorization.PLAYER(), msg.sender) && msg.sender != _player) {
+            revert Players__UnauthorizedChangeAttempt(msg.sender, _player);
+        }
         _;
     }
 
@@ -38,7 +47,7 @@ contract Players {
         }
     }
 
-    function setNick(address _walletAddress, string memory _nick) public onlyRole(s_authorization.ADMIN()) walletExists(_walletAddress)
+    function setNick(address _walletAddress, string memory _nick) public adminOrModifiedPlayer(_walletAddress) walletExists(_walletAddress)
     {
         s_players[_walletAddress].nick = _nick;
 

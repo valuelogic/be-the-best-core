@@ -130,12 +130,22 @@ describe("Players contract", async () => {
   });
 
   describe("SetNick", () => {
-    it("should change players nick", async () => {
+    it("should change players nick when triggered by admin", async () => {
       await playersContract.addPlayer(playerWallet1.address, "nick");
       const player = await playersContract.getPlayer(playerWallet1.address);
       expect(player.nick).to.equal("nick");
 
       await playersContract.setNick(playerWallet1.address, "new_nick");
+      const result = await playersContract.getPlayer(playerWallet1.address);
+      expect(result.nick).to.equal("new_nick");
+    });
+
+    it("should change players nick when triggered by player himself", async () => {
+      await playersContract.addPlayer(playerWallet1.address, "nick");
+      const player = await playersContract.getPlayer(playerWallet1.address);
+      expect(player.nick).to.equal("nick");
+
+      await playersContract.connect(playerWallet1).setNick(playerWallet1.address, "new_nick");
       const result = await playersContract.getPlayer(playerWallet1.address);
       expect(result.nick).to.equal("new_nick");
     });
@@ -146,11 +156,11 @@ describe("Players contract", async () => {
       ).to.be.revertedWith("Players__AccountNotRegistered"); // TODO: check arguments
     });
 
-    it("should be reverted when action performed by non admin player", async () => {
+    it("should be reverted when action performed by non admin account and not a player himself", async () => {
       await playersContract.addPlayer(playerWallet1.address, "nick1");
       await expect(
-        playersContract.connect(playerWallet1).setNick(playerWallet1.address, "nick")
-      ).to.be.revertedWith("Authorization__MissingRole");
+        playersContract.connect(playerWallet2).setNick(playerWallet1.address, "nick")
+      ).to.be.revertedWith("Players__UnauthorizedChangeAttempt");
     });
   });
 });
