@@ -32,10 +32,16 @@ jobs:
       - name: Run tests
         run: npm run coverage
 
+      - name: list directory
+        run: ls coverage
+
       - name: Publish Coverage report
         uses: eleboys/test-coverage-report-action@v1.0.2
         id: report
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          path: coverage/coverage-summary.json
+          token: ${{ github.token  }}
+          path: ./coverage/coverage-summary.json
           title: Test Coverage
+
+      - name: Print the output summary
+        run: echo "Report coverage json ${{ steps.report.outputs.summary }}"

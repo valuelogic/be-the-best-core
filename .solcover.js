@@ -1,3 +1,4 @@
 module.exports = {
-    istanbulReporter: ['json-summary', 'text'],
+    istanbulReporter: ['json-summary'],
+    silent: true,
 }
