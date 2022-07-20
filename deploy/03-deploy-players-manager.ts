@@ -4,7 +4,7 @@ import { developmentChains, networkConfig } from "../helper-hardhat-config";
 import verify from "../utils/verify";
 import {Authorization} from "../typechain-types";
 import {ethers} from "hardhat";
-import {ADMIN} from "../utils/roles";
+import {PLAYER_MANAGER} from "../utils/roles";
 const deployPlayersManager: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deployments: { deploy, get }, network, getNamedAccounts } = hre;
     const { deployer } = await getNamedAccounts();
@@ -21,7 +21,8 @@ const deployPlayersManager: DeployFunction = async (hre: HardhatRuntimeEnvironme
     });
 
     const authorization: Authorization = await ethers.getContract("Authorization");
-    await authorization.grantRole(ADMIN, playersManager.address);
+    const tx = await authorization.grantRole(PLAYER_MANAGER, playersManager.address);
+    await tx.wait(1);
 
     if (!developmentChains.includes(network.name)) {
         await verify(playersManager.address, args);
