@@ -25,7 +25,7 @@ jobs:
         run: npm ci --force
 
       - name: Run tests
-        run: hardhat coverage
+        run: npm run coverage
 
       - name: Publish Coverage report
         uses: eleboys/test-coverage-report-action@v1.0.2
