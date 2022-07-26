@@ -5,6 +5,7 @@ import {
     Players,
     PlayersManager
 } from "../typechain-types";
+import {ADMIN, PLAYER} from "../utils/roles";
 
 describe('PlayersManager contract', () => {
     let authorizationContract: Authorization;
@@ -30,30 +31,24 @@ describe('PlayersManager contract', () => {
                 const [newAccount, nonAdmin] = await ethers.getUnnamedSigners();
 
                 await expect(playersManagerContract.connect(nonAdmin).addPlayer(newAccount.address, 'Nick', false))
-                    .to.be.revertedWith('Authorization__MissingRole');
+                    .to.be.revertedWith('Protected__MissingRole');
             });
 
             it('Should create player and user with player role only', async () => {
                 const [account] = await ethers.getUnnamedSigners();
 
-                const playerRoleBytes = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('PLAYER'));
-                const adminRoleBytes = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('ADMIN'));
-
                 await playersManagerContract.addPlayer(account.address, 'Nick', false);
-                expect(await authorizationContract.hasRole(playerRoleBytes, account.address)).to.be.true;
-                expect(await authorizationContract.hasRole(adminRoleBytes, account.address)).to.be.false;
+                expect(await authorizationContract.hasRole(PLAYER, account.address)).to.be.true;
+                expect(await authorizationContract.hasRole(ADMIN, account.address)).to.be.false;
                 expect(await playersContract.getPlayer(account.address)).to.be.not.null;
             });
 
             it('Should create player and user with player & admin role', async () => {
                 const [account] = await ethers.getUnnamedSigners();
 
-                const playerRoleBytes = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('PLAYER'));
-                const adminRoleBytes = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('ADMIN'));
-
                 await playersManagerContract.addPlayer(account.address, 'Nick', true);
-                expect(await authorizationContract.hasRole(playerRoleBytes, account.address)).to.be.true;
-                expect(await authorizationContract.hasRole(adminRoleBytes, account.address)).to.be.true;
+                expect(await authorizationContract.hasRole(PLAYER, account.address)).to.be.true;
+                expect(await authorizationContract.hasRole(ADMIN, account.address)).to.be.true;
                 expect(await playersContract.getPlayer(account.address)).to.be.not.null;
             });
         })

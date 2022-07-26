@@ -39,7 +39,7 @@ describe("Activities contract", () => {
         activitiesContract
           .connect(player)
           .createActivity(name, reward, active)
-      ).to.be.revertedWith("Authorization__MissingRole"); // TODO: Add args to revertedWith?
+      ).to.be.revertedWith("Protected__MissingRole"); // TODO: Add args to revertedWith?
     });
   });
 

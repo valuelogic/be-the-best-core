@@ -4,6 +4,7 @@ import {deployments, ethers} from "hardhat";
 import {Activity__factory, Authorization__factory, Requests, Requests__factory} from "../typechain-types";
 import {BigNumber, Wallet} from "ethers";
 import {SignerWithAddress} from "@nomiclabs/hardhat-ethers/signers";
+import {ADMIN, PLAYER} from "../utils/roles";
 
 use(solidity);
 
@@ -21,26 +22,21 @@ describe('Requests contract', () => {
         let authorization : MockContract;
         let deployer : SignerWithAddress;
 
-        const playerBytes = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('PLAYER'));
-        const adminBytes = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('ADMIN'));
-
         describe('Request reward', () => {
             beforeEach(async () => {
                 deployer = await ethers.getNamedSigner('deployer');
 
                 authorization = await deployMockContract(deployer, Authorization__factory.abi);
 
-                await authorization.mock.PLAYER.returns(playerBytes);
-                await authorization.mock.ADMIN.returns(adminBytes);
-                await authorization.mock.ensureHasRole.withArgs(playerBytes, deployer.address).returns();
-                await authorization.mock.ensureHasRole.withArgs(adminBytes, deployer.address).returns();
+                await authorization.mock.hasRole.withArgs(PLAYER, deployer.address).returns(true);
+                await authorization.mock.hasRole.withArgs(ADMIN, deployer.address).returns(true);
 
                 requestsContract = await new Requests__factory(deployer).deploy(authorization.address);
             });
 
             it('Should revert when not registered user makes request', async() => {
                 const [address] = await ethers.getUnnamedSigners();
-                await authorization.mock.ensureHasRole.reverts();
+                await authorization.mock.hasRole.returns(false);
                 await expect(requestsContract.connect(address).request(Wallet.createRandom().address)).to.be.reverted;
             });
 
@@ -81,10 +77,8 @@ describe('Requests contract', () => {
                 deployer = await ethers.getNamedSigner('deployer');
 
                 authorization = await deployMockContract(deployer, Authorization__factory.abi);
-                await authorization.mock.PLAYER.returns(playerBytes);
-                await authorization.mock.ADMIN.returns(adminBytes);
-                await authorization.mock.ensureHasRole.withArgs(playerBytes, deployer.address).returns();
-                await authorization.mock.ensureHasRole.withArgs(adminBytes, deployer.address).returns();
+                await authorization.mock.hasRole.withArgs(PLAYER, deployer.address).returns(true);
+                await authorization.mock.hasRole.withArgs(ADMIN, deployer.address).returns(true);
 
                 const activity1 = await deployMockContract(deployer, Activity__factory.abi);
                 await activity1.mock.isActive.returns(true);

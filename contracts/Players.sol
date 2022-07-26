@@ -9,33 +9,26 @@ error Players__AccountNotRegistered(address _player);
 error Players__AccountAlreadyRegistered(address _player);
 error Players__UnauthorizedChangeAttempt(address _modifier, address _player);
 
-contract Players {
+contract Players is Protected {
+    mapping(address => SharedModel.Player) s_players;
+    address[] s_addresses;
+    Requests private s_requests;
+
     event AddedNewPlayer(address indexed walletAddress, string nick);
     event UpdatedPlayersPoints(address indexed walletAddress, uint32 currentPoints);
     event UpdatedPlayersNick(address indexed _walletAddress, string _newNick);
 
-    mapping(address => SharedModel.Player) s_players;
-    address[] s_addresses;
-    Requests private s_requests;
-    Authorization private s_authorization;
-
-    constructor(Authorization _authorization) {
-        s_authorization = _authorization;
+    constructor(Authorization _authorization) Protected(_authorization) {
     }
 
-    modifier onlyRole(bytes32 _role) {
-        s_authorization.ensureHasRole(_role, msg.sender);
-        _;
-    }
-
-    // This modifier and check may not be necessary as we can check If users has PLAYER role assigned
+    // TODO: Think If this modifier is necessary as we can check If users has PLAYER role assigned
     modifier walletExists(address _walletAddress) {
         ensureWalletExists(_walletAddress);
         _;
     }
 
     modifier adminOrModifiedPlayer(address _player) {
-        if(!s_authorization.hasRole(s_authorization.ADMIN(), msg.sender) && !s_authorization.hasRole(s_authorization.PLAYER(), msg.sender) && msg.sender != _player) {
+        if(!s_authorization.hasRole(Roles.ADMIN, msg.sender) && !s_authorization.hasRole(Roles.PLAYER, msg.sender) && msg.sender != _player) {
             revert Players__UnauthorizedChangeAttempt(msg.sender, _player);
         }
         _;
@@ -92,7 +85,7 @@ contract Players {
 
     function addPoints(address _player, uint32 _points)
     public
-    onlyRole(s_authorization.ADMIN())
+    onlyRole(Roles.ADMIN)
     walletExists(_player)
     {
         s_players[_player].points += _points;
@@ -102,7 +95,7 @@ contract Players {
 
     function substractPoints(address _player, uint32 _points)
     public
-    onlyRole(s_authorization.ADMIN())
+    onlyRole(Roles.ADMIN)
     walletExists(_player)
     {
         if (s_players[_player].points < _points) {
