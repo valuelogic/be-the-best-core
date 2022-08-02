@@ -27,7 +27,8 @@
     "test": "npx hardhat typechain && npx hardhat test",
     "node": "npx hardhat node",
     "script": "npx hardhat run --network localhost",
-    "deploy": "npx hardhat deploy"
+    "deploy": "npx hardhat deploy",
+    "coverage": "npx hardhat typechain && npx hardhat coverage"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.0"
