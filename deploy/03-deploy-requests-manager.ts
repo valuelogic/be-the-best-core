@@ -2,6 +2,9 @@ import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { developmentChains, networkConfig } from "../helper-hardhat-config";
 import verify from "../utils/verify";
+import {Authorization} from "../typechain-types";
+import {ethers} from "hardhat";
+import {REQUEST_MANAGER} from "../utils/roles";
 const deployRequestsManager: DeployFunction = async (
     hre: HardhatRuntimeEnvironment
 ) => {
@@ -19,6 +22,10 @@ const deployRequestsManager: DeployFunction = async (
         log: true,
         waitConfirmations: networkConfig[network.name].blockConfirmation || 0,
     });
+
+    const authorization: Authorization = await ethers.getContract("Authorization");
+    const tx = await authorization.grantRole(REQUEST_MANAGER, requestsManager.address);
+    await tx.wait(1);
 
     if (!developmentChains.includes(network.name)) {
         await verify(requestsManager.address, args);
