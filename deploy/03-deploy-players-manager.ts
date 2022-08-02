@@ -5,6 +5,7 @@ import verify from "../utils/verify";
 import {Authorization} from "../typechain-types";
 import {ethers} from "hardhat";
 import {PLAYER_MANAGER} from "../utils/roles";
+
 const deployPlayersManager: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deployments: { deploy, get }, network, getNamedAccounts } = hre;
     const { deployer } = await getNamedAccounts();
