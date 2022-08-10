@@ -10,6 +10,7 @@
     "@types/mocha": "^9.1.0",
     "@types/node": "^17.0.23",
     "chai": "^4.3.6",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.0.1",
     "ethereum-waffle": "^3.4.4",
     "ethers": "^5.6.2",
@@ -27,7 +28,8 @@
     "test": "npx hardhat typechain && npx hardhat test",
     "node": "npx hardhat node",
     "script": "npx hardhat run --network localhost",
-    "deploy": "npx hardhat deploy"
+    "deploy": "npx hardhat deploy",
+    "deploy:update-frontend": "cross-env UPDATE_FRONTEND=1 hardhat deploy"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.0"

@@ -10,6 +10,7 @@ npx hardhat node
 npx hardhat run scripts\sample-script.ts --network localhost
 npx hardhat help
 npx hardhat deploy
+npm run deploy:update-frontend
 ```
 
 If you use hardhat-shortcuts instead of 'npx hardhat ...' you can type 'hh ...'.
