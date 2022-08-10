@@ -21,7 +21,6 @@ contract Players is Protected {
     constructor(Authorization _authorization) Protected(_authorization) {
     }
 
-    // TODO: Think If this modifier is necessary as we can check If users has PLAYER role assigned
     modifier walletExists(address _walletAddress) {
         ensureWalletExists(_walletAddress);
         _;
@@ -50,7 +49,7 @@ contract Players is Protected {
     function addPlayer(
         address _walletAddress,
         string memory _nick
-    ) external {
+    ) external onlyRole(Roles.PLAYER_MANAGER) {
         if (s_players[_walletAddress].walletAddress == _walletAddress) {
             revert Players__AccountAlreadyRegistered(_walletAddress);
         }
@@ -85,7 +84,7 @@ contract Players is Protected {
 
     function addPoints(address _player, uint32 _points)
     public
-    onlyRole(Roles.ADMIN)
+    onlyRole(Roles.REQUEST_MANAGER)
     walletExists(_player)
     {
         s_players[_player].points += _points;
@@ -95,7 +94,7 @@ contract Players is Protected {
 
     function substractPoints(address _player, uint32 _points)
     public
-    onlyRole(Roles.ADMIN)
+    onlyRole(Roles.REQUEST_MANAGER)
     walletExists(_player)
     {
         if (s_players[_player].points < _points) {

@@ -17,3 +17,5 @@ typechain-types
 
 #Others
 .env
+coverage
+coverage.json
