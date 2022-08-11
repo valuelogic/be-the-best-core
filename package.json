@@ -26,11 +26,11 @@
     "clean": "npx hardhat clean",
     "compile": "npx hardhat compile",
     "test": "npx hardhat typechain && npx hardhat test",
-    "node": "npx hardhat node",
+     "node": "cross-env UPDATE_FRONTEND=1 hardhat node",
     "script": "npx hardhat run --network localhost",
     "deploy": "npx hardhat deploy",
     "coverage": "npx hardhat typechain && npx hardhat coverage",
-    "deploy:update-frontend": "cross-env UPDATE_FRONTEND=1 hardhat deploy"    
+    "deploy:update-frontend": "hardhat deploy --network localhost"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.0"

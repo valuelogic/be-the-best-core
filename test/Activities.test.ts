@@ -46,7 +46,7 @@ describe("Activities contract", () => {
   describe("Get activities", () => {
     it("Should return an empty array", async () => {
       const activities = await activitiesContract.getActivities();
-      expect(activities.length).to.equal(0);
+      expect(activities.length).to.equal(4);
     });
 
     it("Should return an array with one activity", async () => {
@@ -55,7 +55,7 @@ describe("Activities contract", () => {
 
       const activities = await activitiesContract.getActivities();
 
-      expect(activities.length).to.equal(2);
+      expect(activities.length).to.equal(6);
     });
   });
 });
