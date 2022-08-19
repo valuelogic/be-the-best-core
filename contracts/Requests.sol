@@ -15,8 +15,7 @@ contract Requests is Protected {
     event RequestAdded(address indexed player, address indexed activity);
     event RequestReviewed(address indexed player, address indexed activity, SharedModel.RequestStatus status);
 
-    constructor(Authorization _authorization) Protected(_authorization) {
-    }
+    constructor(Authorization _authorization) Protected(_authorization) {}
 
     function request(address _activity) external onlyRole(Roles.PLAYER) {
         Activity activity = Activity(_activity);

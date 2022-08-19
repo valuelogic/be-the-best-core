@@ -10,16 +10,13 @@ error Players__AccountAlreadyRegistered(address _player);
 error Players__UnauthorizedChangeAttempt(address _modifier, address _player);
 
 contract Players is Protected {
-    mapping(address => SharedModel.Player) s_players;
-    address[] s_addresses;
+    mapping(address => SharedModel.Player) private s_players;
+    address[] private s_addresses;
     Requests private s_requests;
 
     event AddedNewPlayer(address indexed walletAddress, string nick);
     event UpdatedPlayersPoints(address indexed walletAddress, uint32 currentPoints);
     event UpdatedPlayersNick(address indexed _walletAddress, string _newNick);
-
-    constructor(Authorization _authorization) Protected(_authorization) {
-    }
 
     modifier walletExists(address _walletAddress) {
         ensureWalletExists(_walletAddress);
@@ -33,18 +30,7 @@ contract Players is Protected {
         _;
     }
 
-    function ensureWalletExists(address _walletAddress) public view {
-        if (s_players[_walletAddress].walletAddress != _walletAddress) {
-            revert Players__AccountNotRegistered(_walletAddress);
-        }
-    }
-
-    function setNick(address _walletAddress, string memory _nick) public adminOrModifiedPlayer(_walletAddress) walletExists(_walletAddress)
-    {
-        s_players[_walletAddress].nick = _nick;
-
-        emit UpdatedPlayersNick(_walletAddress, _nick);
-    }
+    constructor(Authorization _authorization) Protected(_authorization){}
 
     function addPlayer(
         address _walletAddress,
@@ -82,6 +68,13 @@ contract Players is Protected {
         return result;
     }
 
+    function setNick(address _walletAddress, string memory _nick) public adminOrModifiedPlayer(_walletAddress) walletExists(_walletAddress)
+    {
+        s_players[_walletAddress].nick = _nick;
+
+        emit UpdatedPlayersNick(_walletAddress, _nick);
+    }
+
     function addPoints(address _player, uint32 _points)
     public
     onlyRole(Roles.REQUEST_MANAGER)
@@ -104,5 +97,11 @@ contract Players is Protected {
         }
 
         emit UpdatedPlayersPoints(_player, s_players[_player].points);
+    }
+
+    function ensureWalletExists(address _walletAddress) public view {
+        if (s_players[_walletAddress].walletAddress != _walletAddress) {
+            revert Players__AccountNotRegistered(_walletAddress);
+        }
     }
 }
