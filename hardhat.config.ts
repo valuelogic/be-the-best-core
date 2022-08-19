@@ -1,11 +1,8 @@
-import "@nomiclabs/hardhat-ethers";
-import "@nomiclabs/hardhat-waffle";
-import "@nomiclabs/hardhat-etherscan";
-import "solidity-coverage";
-import "@typechain/hardhat";
 import "hardhat-deploy";
 import "dotenv/config";
 import { HardhatUserConfig } from "hardhat/config";
+import "@nomicfoundation/hardhat-toolbox";
+import "@nomiclabs/hardhat-waffle";
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
 const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY || "";
