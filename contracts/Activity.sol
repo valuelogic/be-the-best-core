@@ -9,7 +9,7 @@ error Activity__EmptyName();
 error Activity__ZeroReward();
 
 contract Activity is Protected {
-    bool s_active;
+    bool private s_active;
     uint8 public s_reward;
     string public s_name;
 
@@ -37,10 +37,6 @@ contract Activity is Protected {
         s_active = _active;
     }
 
-    function isActive() external view returns (bool) {
-        return s_active;
-    }
-
     function setName(string memory _newName) external onlyRole(Roles.ADMIN) {
         if (bytes(_newName).length == 0) {
             revert Activity__EmptyName();
@@ -58,10 +54,6 @@ contract Activity is Protected {
         s_reward = _reward;
     }
 
-    function getReward() external view returns (uint8) {
-        return s_reward;
-    }
-
     function deactivate() external onlyRole(Roles.ADMIN) {
         s_active = false;
         emit Deactivated();
@@ -70,5 +62,13 @@ contract Activity is Protected {
     function activate() external onlyRole(Roles.ADMIN) {
         s_active = true;
         emit Activated();
+    }
+
+    function isActive() external view returns (bool) {
+        return s_active;
+    }
+
+    function getReward() external view returns (uint8) {
+        return s_reward;
     }
 }
