@@ -9,7 +9,7 @@ import {
 } from '../typechain-types';
 import { BigNumber, Wallet } from 'ethers';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
-import { ADMIN, PLAYER } from '../utils/roles';
+import {ADMIN, PLAYER, REQUEST_MANAGER} from '../utils/roles';
 
 use(solidity);
 
@@ -117,7 +117,7 @@ describe('Requests contract', () => {
                     .withArgs(PLAYER, deployer.address)
                     .returns(true);
                 await authorization.mock.hasRole
-                    .withArgs(ADMIN, deployer.address)
+                    .withArgs(REQUEST_MANAGER, deployer.address)
                     .returns(true);
 
                 const activity1 = await deployMockContract(
