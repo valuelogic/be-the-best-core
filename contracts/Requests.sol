@@ -27,7 +27,7 @@ contract Requests is Protected {
         emit RequestAdded(msg.sender, _activity);
     }
 
-    function review(uint _requestId, SharedModel.RequestStatus _status) external onlyRole(Roles.ADMIN) {
+    function review(uint _requestId, SharedModel.RequestStatus _status) external onlyRole(Roles.REQUEST_MANAGER) {
         if (s_requests[_requestId].status != SharedModel.RequestStatus.pending) {
             revert Requests__AlreadyReviewed(_requestId);
         }
